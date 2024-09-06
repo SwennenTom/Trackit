@@ -2,11 +2,37 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Trackit.Screens.Home"
-             Title="Home">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to the Home page!!!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="Trackit">
+    <StackLayout Padding="20" Spacing="10">
+
+        <StackLayout Orientation="Horizontal"
+             HorizontalOptions="StartAndExpand"
+             VerticalOptions="StartAndExpand"
+             Spacing="10">
+            <Label Text="Trackers"
+           FontSize="Large"
+           HorizontalOptions="Start"
+                   VerticalOptions="Center"/>
+
+            <Button Text="➕" 
+            Command="{Binding AddTrackerCommand}" 
+            HorizontalOptions="Center"
+            BackgroundColor="LightBlue"
+            TextColor="Black" />
+        </StackLayout>
+
+
+        <CollectionView x:Name="TrackersList" SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="10">
+                        <Label Text="{Binding name}" FontSize="Medium" />
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        
+
+    </StackLayout>
 </ContentPage>
