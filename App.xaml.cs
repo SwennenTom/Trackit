@@ -1,5 +1,6 @@
 ﻿using Trackit.Data;
 using Trackit.Properties;
+using Trackit.Screens;
 
 namespace Trackit
 {
@@ -11,7 +12,7 @@ namespace Trackit
         {
             InitializeComponent();
 
-            MainPage = new AppShell();
+            MainPage = new NavigationPage(new Home());
         }
 
         public static Database Database
