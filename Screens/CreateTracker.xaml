@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Trackit.ViewModels"
              x:Class="Trackit.Screens.CreateTracker"
              Title="CreateTracker">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to the CreateTracker page!!!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <ContentPage.BindingContext>
+        <vm:CreateTrackerViewModel/>
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="20" Spacing="15">
+        <Label Text="Create a New Tracker" FontSize="Large" HorizontalOptions="Center"/>
+
+        <Entry x:Name="TrackerName" Placeholder="Tracker Name" Text="{Binding Name}" />
+        <Entry x:Name="TrackerDescription" Placeholder="Tracker Description" Text="{Binding Description}" />
+
+        <Entry x:Name="MinThreshold" Placeholder="Minimum Threshold" Keyboard="Numeric" Text="{Binding MinThreshold}" />
+        <Entry x:Name="MaxThreshold" Placeholder="Maximum Threshold" Keyboard="Numeric" Text="{Binding MaxThreshold}" />
+
+        <Button Text="Create Tracker"
+                Command="{Binding CreateTrackerCommand}" 
+                BackgroundColor="LightGreen" 
+                TextColor="Black"/>
+
+    </StackLayout>
 </ContentPage>

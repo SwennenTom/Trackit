@@ -25,11 +25,12 @@ namespace Trackit.ViewModels
             AddTrackerCommand = new Command(OnAddTracker);
             LongPressCommand = new Command<Tracker>(OnLongPress);
 
-            LoadTrackers();
         }
 
-        private async void LoadTrackers()
+        public async void LoadTrackers()
         {
+
+            Trackers.Clear();
             var trackersFromDb = await App.Database.GetTrackersAsync();
 
             foreach(var tracker in trackersFromDb)
@@ -40,21 +41,7 @@ namespace Trackit.ViewModels
 
         private async void OnAddTracker()
         {
-            string trackerName = await App.Current.MainPage.DisplayPromptAsync("New Tracker", "Enter the name of the tracker:");
-
-            if (string.IsNullOrWhiteSpace(trackerName))
-                return;
-
-            string trackerDescription = await App.Current.MainPage.DisplayPromptAsync("New Tracker", "Enter a description for the tracker:");
-
-            if (string.IsNullOrWhiteSpace(trackerDescription))
-                return;
-
-            var newTracker = new Tracker { name = trackerName, description = trackerDescription };
-
-            Trackers.Add(newTracker);
-
-            await App.Database.AddTrackerAsync(newTracker);
+            await App.Current.MainPage.Navigation.PushAsync(new Trackit.Screens.CreateTracker());
         }
 
 
