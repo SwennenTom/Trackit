@@ -3,7 +3,9 @@
              xmlns:vm="clr-namespace:Trackit.ViewModels"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Trackit.Screens.Home"
-             Title="Trackit">
+             Title="Trackit"
+             BackgroundColor="LightSkyBlue"
+             >
 
     <ContentPage.BindingContext>
         <vm:HomeViewModel />
@@ -25,6 +27,11 @@
                     HorizontalOptions="Center"
                     BackgroundColor="LightBlue"
                     TextColor="Black" />
+            <Button Text="ℹ️" 
+                    Command="{Binding ShowHomeInfoCommand}" 
+                    HorizontalOptions="Center"
+                    BackgroundColor="LightBlue"
+                    TextColor="Black" />
         </StackLayout>
 
         <CollectionView x:Name="TrackersList"
@@ -34,12 +41,18 @@
                 <DataTemplate>
                     <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="10">
                         <Frame.GestureRecognizers>
-                            <toolkit:LongPressGestureRecognizer
-                                Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.LongPressCommand}"
-                                CommandParameter="{Binding .}" />
+                            <TapGestureRecognizer
+                                Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.NavigateToDetailCommand}"
+                                CommandParameter="{Binding .}"/>
+                            <TapGestureRecognizer
+                                NumberOfTapsRequired="2"
+                                Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.OnSwipeCommand}"
+                                CommandParameter="{Binding .}"/>
                         </Frame.GestureRecognizers>
-
-                        <Label Text="{Binding name}" FontSize="Medium" />
+                        <StackLayout>
+                            <Label Text="{Binding name}" FontSize="Medium" HorizontalTextAlignment="Center" />
+                            <Label Text="{Binding description}" FontSize="Small" MaxLines="3"/>
+                        </StackLayout>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

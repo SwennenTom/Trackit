@@ -15,7 +15,7 @@ namespace Trackit.Models
         [Indexed]
         public int tracker_id { get; set; }
 
-        public double value { get; set; }
+        public float value { get; set; }
         public DateTime date { get; set; }
     }
 }

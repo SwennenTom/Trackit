@@ -1,5 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
+using Microsoft.Maui;
+using Microsoft.Maui.Hosting;
+using Microsoft.Maui.Controls.Hosting;
+using Microcharts.Maui;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace Trackit
 {
@@ -10,7 +15,8 @@ namespace Trackit
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .UseMauiCommunityToolkit(); // Add this line
+                .UseMauiCommunityToolkit()
+                .UseSkiaSharp();
             return builder.Build();
         }
     }

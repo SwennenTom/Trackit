@@ -1,9 +1,13 @@
+using Trackit.Models;
+using Trackit.ViewModels;
+
 namespace Trackit.Screens;
 
 public partial class Detail : ContentPage
 {
-	public Detail()
-	{
-		InitializeComponent();
-	}
+    public Detail(Tracker tracker)
+    {
+        InitializeComponent();
+        BindingContext = new DetailViewModel(tracker);
+    }
 }

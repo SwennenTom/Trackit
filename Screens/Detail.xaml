@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Trackit.ViewModels"
+             xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+             xmlns:local="clr-namespace:Trackit.Converters"
              x:Class="Trackit.Screens.Detail"
-             Title="Detail">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to the Detail page!!!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="{Binding Name}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <StackLayout Padding="20" Spacing="10">
+        
+        <microcharts:ChartView Chart="{Binding Chart}" />
+
+        <Label Text="{Binding NoDataMessage}"
+               IsVisible="{Binding Chart, Converter={StaticResource NullToBooleanConverter}}"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand"
+               FontSize="Medium"
+               TextColor="Gray"/>
+
+    </StackLayout>
 </ContentPage>

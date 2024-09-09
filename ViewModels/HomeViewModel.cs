@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Trackit.Models;
+using System.Runtime.CompilerServices;
 
 namespace Trackit.ViewModels
 {
@@ -14,7 +15,9 @@ namespace Trackit.ViewModels
     {
         public ObservableCollection<Tracker> Trackers { get; set; }
         public ICommand AddTrackerCommand { get; }
-        public ICommand LongPressCommand { get; }
+        public ICommand OnSwipeCommand { get; }
+        public ICommand NavigateToDetailCommand { get; }
+        public ICommand ShowHomeInfoCommand { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -23,7 +26,9 @@ namespace Trackit.ViewModels
             Trackers = new ObservableCollection<Tracker>();
 
             AddTrackerCommand = new Command(OnAddTracker);
-            LongPressCommand = new Command<Tracker>(OnLongPress);
+            OnSwipeCommand = new Command<Tracker>(OnSwipe);
+            NavigateToDetailCommand = new Command<Tracker>(OnNavigateToDetail);
+            ShowHomeInfoCommand = new Command(OnShowHomeInfo);
 
         }
 
@@ -33,7 +38,7 @@ namespace Trackit.ViewModels
             Trackers.Clear();
             var trackersFromDb = await App.Database.GetTrackersAsync();
 
-            foreach(var tracker in trackersFromDb)
+            foreach (var tracker in trackersFromDb)
             {
                 Trackers.Add(tracker);
             }
@@ -45,16 +50,27 @@ namespace Trackit.ViewModels
         }
 
 
-        private async void OnLongPress(Tracker tracker)
+        private async void OnSwipe(Tracker tracker)
         {
-            bool result = await App.Current.MainPage.DisplayAlert("Delete Tracker", $"Are you sure you want to delete {tracker.name}?", "Yes", "No");
+                bool result = await App.Current.MainPage.DisplayAlert("Delete Tracker", $"Are you sure you want to delete {tracker.name}?", "Yes", "No");
 
-            if(result)
-            {
-                Trackers.Remove(tracker);
-                await App.Database.DeleteTrackerAsync(tracker);
-            }
+                if (result)
+                {
+                    Trackers.Remove(tracker);
+                    await App.Database.DeleteTrackerAsync(tracker);
+                }
         }
+        private async void OnNavigateToDetail(Tracker tracker)
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new Trackit.Screens.Detail(tracker));
+        }
+
+        private async void OnShowHomeInfo()
+        {
+            await App.Current.MainPage.DisplayAlert("Info","Tap + to create a new tracker. Tap on an existing tracker to view the graph. Double tap on an existing tracker to delete it.", "Ok");
+        }
+
+
 
         protected void OnPropertyChanged(string propertyName)
         {
