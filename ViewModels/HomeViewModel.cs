@@ -21,6 +21,9 @@ namespace Trackit.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private readonly Tracker _tracker;
+        public string Name => _tracker.name;
+
         public HomeViewModel()
         {
             Trackers = new ObservableCollection<Tracker>();
@@ -57,13 +60,23 @@ namespace Trackit.ViewModels
                 if (result)
                 {
                     Trackers.Remove(tracker);
-                    await App.Database.DeleteTrackerAsync(tracker);
+                    await App.Database.DeleteTrackerAsync(tracker.tracker_id);
                 }
         }
         private async void OnNavigateToDetail(Tracker tracker)
         {
-            await App.Current.MainPage.Navigation.PushAsync(new Trackit.Screens.Detail(tracker));
+            if (tracker != null)
+            {
+                // Make sure the tracker object and its ID are valid
+                await Shell.Current.GoToAsync($"detail?trackerId={tracker.tracker_id}");
+            }
+            else
+            {
+                // Handle invalid tracker case
+                await Application.Current.MainPage.DisplayAlert("Error", "Invalid tracker selected", "OK");
+            }
         }
+
 
         private async void OnShowHomeInfo()
         {

@@ -17,7 +17,11 @@ namespace Trackit
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
                 .UseSkiaSharp();
+
+            //Task.Run(async () => await App.Database.AddTestDataAsync()).Wait();
+
             return builder.Build();
+
         }
     }
 }

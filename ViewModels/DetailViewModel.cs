@@ -1,17 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Microcharts;
 using SkiaSharp;
 using Trackit.Models;
-using Trackit.Screens;
 
 namespace Trackit.ViewModels
 {
+    //[QueryProperty(nameof(TrackerId), "trackerId")]
     public class DetailViewModel : BindableObject
     {
+        private int _trackerId;
+
+        
+        //public int TrackerId
+        //{
+        //    get => _trackerId;
+        //    set
+        //    {
+        //        _trackerId = value;
+        //        LoadTrackerDataAsync();
+        //    }
+        //}
+
+        // Other properties and fields
         private LineChart _chart;
         public LineChart Chart
         {
@@ -34,25 +47,77 @@ namespace Trackit.ViewModels
             }
         }
 
-        private readonly Tracker _tracker;
-        public string Name => _tracker.name;
-        public DetailViewModel(Tracker tracker)
+        public ICommand DeleteTrackerCommand { get; }
+        public ICommand AddValueCommand { get; }
+        public ICommand NavigateToValuesCommand { get; }
+        public ICommand NavigateToSettingsCommand { get; }
+
+        public DetailViewModel(int trackerId)
         {
-            _tracker = tracker;
+            _trackerId = trackerId;
+            DeleteTrackerCommand = new Command(async () => await DeleteTrackerAsync());
+            AddValueCommand = new Command(async () => await AddValueAsync());
+            NavigateToValuesCommand = new Command(async () => await NavigateToValuesAsync());
+            NavigateToSettingsCommand = new Command(async () => await NavigateToSettingsAsync());
             LoadChartDataAsync();
         }
 
-        public DetailViewModel()
+        //private async Task LoadTrackerDataAsync()
+        //{
+        //    // Load tracker data based on _trackerId
+        //    var tracker = await App.Database.GetTrackerAsync(_trackerId);
+        //    if (tracker != null)
+        //    {
+        //        // Logic to populate chart and other data using the tracker
+        //        await LoadChartDataAsync();
+        //    }
+        //}
+
+        private async Task DeleteTrackerAsync()
         {
-            LoadChartDataAsync();
+            await App.Database.DeleteTrackerAsync(_trackerId);
+            await Shell.Current.GoToAsync("//home");
         }
 
+        private async Task AddValueAsync()
+        {
+            string result = await Shell.Current.CurrentPage.DisplayPromptAsync(
+                "Add Value",
+                "Enter the value: ",
+                "Ok",
+                "Cancel",
+                "0",
+                -1,
+                keyboard: Keyboard.Numeric);
+
+            if (!string.IsNullOrEmpty(result) && float.TryParse(result, out float value))
+            {
+                var trackerValue = new TrackerValues
+                {
+                    tracker_id = _trackerId,
+                    value = value,
+                    date = DateTime.Now
+                };
+
+                await App.Database.AddValueAsync(trackerValue);
+                await LoadChartDataAsync();
+            }
+        }
+
+        private async Task NavigateToValuesAsync()
+        {
+            await Shell.Current.GoToAsync($"values?trackerId={_trackerId}");
+        }
+
+        private async Task NavigateToSettingsAsync()
+        {
+            await Shell.Current.GoToAsync($"settings?trackerId={_trackerId}");
+        }
 
         private async Task LoadChartDataAsync()
         {
             var entries = new List<ChartEntry>();
-
-            var readings = await App.Database.GetValuesForTrackerAsync(_tracker.tracker_id);
+            var readings = await App.Database.GetValuesForTrackerAsync(_trackerId);
 
             if (readings.Any())
             {
@@ -70,7 +135,7 @@ namespace Trackit.ViewModels
                 {
                     Entries = entries,
                     LineMode = LineMode.Straight,
-                    LineSize = 8,
+                    LineSize = 10,
                     PointMode = PointMode.Circle,
                     PointSize = 18,
                     BackgroundColor = SKColors.White

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Trackit.ViewModels"
@@ -14,15 +13,23 @@
     </ContentPage.Resources>
 
     <StackLayout Padding="20" Spacing="10">
-        
-        <microcharts:ChartView Chart="{Binding Chart}" />
+        <!-- StackLayout for buttons -->
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
+            <Button Text="➕" Command="{Binding AddValueCommand}" Margin="0,0,5,0"/>
+            <Button Text="🔍" Command="{Binding NavigateToValuesCommand}" Margin="0,0,5,0"/>
+            <Button Text="🗑️" Command="{Binding DeleteTrackerCommand}" Margin="0,0,5,0"/>
+            <Button Text="Settings" Command="{Binding NavigateToSettingsCommand}"/>
+        </StackLayout>
 
-        <Label Text="{Binding NoDataMessage}"
-               IsVisible="{Binding Chart, Converter={StaticResource NullToBooleanConverter}}"
-               HorizontalOptions="Center"
-               VerticalOptions="CenterAndExpand"
-               FontSize="Medium"
-               TextColor="Gray"/>
-
+        <!-- StackLayout for chart and label -->
+        <StackLayout Spacing="10">
+            <microcharts:ChartView Chart="{Binding Chart}" HeightRequest="300"/>
+            <Label Text="{Binding NoDataMessage}"
+                   IsVisible="{Binding Chart, Converter={StaticResource NullToBooleanConverter}}"
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand"
+                   FontSize="Medium"
+                   TextColor="Gray"/>
+        </StackLayout>
     </StackLayout>
 </ContentPage>

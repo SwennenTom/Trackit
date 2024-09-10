@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Trackit"
+    xmlns:screens="clr-namespace:Trackit.Screens"
     Shell.FlyoutBehavior="Disabled"
     Title="Trackit">
 
@@ -11,5 +12,11 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage"/>
+
+    <ShellContent Title="Home" ContentTemplate="{DataTemplate screens:Home}" Route="home"/>
+    <ShellContent Title="Detail" ContentTemplate="{DataTemplate screens:Detail}" Route="detail"/>
+    <ShellContent Title="Values" ContentTemplate="{DataTemplate screens:Values}" Route="values"/>
+    <ShellContent Title="Settings" ContentTemplate="{DataTemplate screens:SettingsTracker}" Route="settings"/>
+    <ShellContent Title="Create Tracker" ContentTemplate="{DataTemplate screens:CreateTracker}" Route="createTracker"/>
 
 </Shell>

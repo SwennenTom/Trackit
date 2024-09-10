@@ -50,6 +50,7 @@
                                 CommandParameter="{Binding .}"/>
                         </Frame.GestureRecognizers>
                         <StackLayout>
+                            <Label Text="{Binding tracker_id}" FontSize="Small" />
                             <Label Text="{Binding name}" FontSize="Medium" HorizontalTextAlignment="Center" />
                             <Label Text="{Binding description}" FontSize="Small" MaxLines="3"/>
                         </StackLayout>

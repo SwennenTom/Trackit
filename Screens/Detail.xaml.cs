@@ -1,13 +1,30 @@
-using Trackit.Models;
 using Trackit.ViewModels;
 
-namespace Trackit.Screens;
-
-public partial class Detail : ContentPage
+namespace Trackit.Screens
 {
-    public Detail(Tracker tracker)
+    [QueryProperty(nameof(TrackerId), "trackerId")]
+    public partial class Detail : ContentPage
     {
-        InitializeComponent();
-        BindingContext = new DetailViewModel(tracker);
+        public int TrackerId { get; set; }
+
+        public Detail()
+        {
+            InitializeComponent();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            if (TrackerId > 0)
+            {
+                BindingContext = new DetailViewModel(TrackerId);
+            }
+            else
+            {
+                // Handle the case when the trackerId is missing
+                DisplayAlert("Error", "Tracker ID not found!", "OK");
+            }
+        }
     }
 }
