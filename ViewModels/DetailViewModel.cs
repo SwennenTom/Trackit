@@ -91,7 +91,9 @@ namespace Trackit.ViewModels
 
         private async Task NavigateToValuesAsync()
         {
-            await _navigation.PushAsync(new Values(_tracker));
+            var valuesPage = new Values(_tracker);
+            await _navigation.PushAsync(valuesPage);
+            //await _navigation.PushAsync(new Values(_tracker));
         }
 
         private async Task NavigateToSettingsAsync()

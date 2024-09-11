@@ -12,4 +12,16 @@ public partial class Values : ContentPage
 		_tracker = tracker;
         BindingContext = new ValuesViewModel(tracker);
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        var viewModel = BindingContext as ValuesViewModel;
+
+        if (viewModel != null)
+        {
+            viewModel.LoadTrackerValues();
+        }
+    }
 }
