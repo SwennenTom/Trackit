@@ -10,5 +10,17 @@ namespace Trackit.Screens
             InitializeComponent();
             BindingContext = new DetailViewModel(tracker, this.Navigation, this);
         }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            var viewModel = BindingContext as DetailViewModel;
+
+            if (viewModel != null)
+            {
+                viewModel.LoadChartDataAsync();
+            }
+        }
     }
 }

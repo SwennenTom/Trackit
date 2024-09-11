@@ -13,23 +13,36 @@ namespace Trackit.ViewModels
     {
         private Tracker _tracker;
 
-        public ObservableCollection<TrackerValues> trackerValues { get; set; }
+        public ObservableCollection<TrackerValues> trackerValues { get; set; } = new ObservableCollection<TrackerValues>();
 
         public ICommand EditValueCommand { get; set; }
         public ICommand DeleteValueCommand { get; set; }
+
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged(nameof(IsBusy));
+            }
+        }
 
 
         public ValuesViewModel(Tracker tracker)
         {
             _tracker = tracker;
-            LoadTrackerValues();
 
             EditValueCommand = new Command<TrackerValues>(async (value) => await OnEditValue(value));
             DeleteValueCommand = new Command<TrackerValues>(async (value) => await OnDeleteValue(value));
+
+            //LoadTrackerValues();
         }
 
         public async Task LoadTrackerValues()
         {
+            IsBusy = true;
             trackerValues.Clear();
             var valuesFromDb = await App.Database.GetValuesForTrackerAsync(_tracker.tracker_id);
 
@@ -37,6 +50,7 @@ namespace Trackit.ViewModels
             {
                 trackerValues.Add(value);
             }
+            IsBusy = false;
         }
         private async Task OnEditValue(TrackerValues value)
         {
@@ -45,8 +59,21 @@ namespace Trackit.ViewModels
 
         private async Task OnDeleteValue(TrackerValues value)
         {
-            await App.Database.DeleteValueAsync(value);
-            //TrackerValues.Remove(value); // Update the collection after deletion
+            bool isConfirmed = await App.Current.MainPage.DisplayAlert(
+                "Delete value",
+                "Are you sure you want to delete this value?",
+                "Yes, delete the value.",
+                "No, keep the value."
+                );
+
+            if (isConfirmed)
+            {
+                IsBusy=true;
+                await App.Database.DeleteValueAsync(value);
+                trackerValues.Clear();
+                await LoadTrackerValues();
+                IsBusy=false;
+            }
         }
     }
 }

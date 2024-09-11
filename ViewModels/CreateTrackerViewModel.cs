@@ -15,6 +15,17 @@ namespace Trackit.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged(nameof(IsBusy));
+            }
+        }
+
         public CreateTrackerViewModel()
         {
             // Initialize the command for creating a tracker
@@ -48,11 +59,14 @@ namespace Trackit.ViewModels
                 tracker_id = newTracker.tracker_id
             };
 
+            IsBusy = true;
             // Save Tracker to database with the linked SettingsId
             await App.Database.AddTrackerAsync(newTracker);
 
             // Save TrackerSettings to database
             await App.Database.AddSettingsAsync(trackerSettings);
+
+            IsBusy = false;
 
             // Navigate back to Home page or refresh the list
             await App.Current.MainPage.Navigation.PopAsync();

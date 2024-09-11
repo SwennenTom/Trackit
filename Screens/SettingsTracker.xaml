@@ -4,6 +4,14 @@
              x:Class="Trackit.Screens.SettingsTracker"
              Title="SettingsTracker">
     <VerticalStackLayout>
+        
+<!--Keep the activity indicator at all times!-->
+        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                               IsRunning="{Binding IsBusy}" 
+                               Color="Blue"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+
         <Label 
             Text="Welcome to the Settings page!!!"
             VerticalOptions="Center" 

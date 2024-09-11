@@ -9,6 +9,12 @@
 
     <StackLayout Padding="20" Spacing="10">
 
+        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                               IsRunning="{Binding IsBusy}" 
+                               Color="Blue"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+
         <StackLayout Orientation="Horizontal"
                      HorizontalOptions="Start"
                      VerticalOptions="Start"
@@ -42,7 +48,7 @@
                                 CommandParameter="{Binding .}"/>
                             <TapGestureRecognizer
                                 NumberOfTapsRequired="2"
-                                Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.OnSwipeCommand}"
+                                Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.OnDeleteCommand}"
                                 CommandParameter="{Binding .}"/>
                         </Frame.GestureRecognizers>
                         <StackLayout>

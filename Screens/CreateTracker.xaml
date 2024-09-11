@@ -10,6 +10,13 @@
     </ContentPage.BindingContext>
 
     <StackLayout Padding="20" Spacing="15">
+        
+        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                               IsRunning="{Binding IsBusy}" 
+                               Color="Blue"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+        
         <Label Text="Create a New Tracker" FontSize="Large" HorizontalOptions="Center"/>
 
         <Entry x:Name="TrackerName" Placeholder="Tracker Name" Text="{Binding Name}" />

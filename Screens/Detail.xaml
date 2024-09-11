@@ -13,7 +13,13 @@
     </ContentPage.Resources>
 
     <StackLayout Padding="20" Spacing="10">
-        <!-- StackLayout for buttons -->
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                               IsRunning="{Binding IsBusy}" 
+                               Color="Blue"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center" />
+
         <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
             <Button Text="➕" Command="{Binding AddValueCommand}" Margin="0,0,5,0"/>
             <Button Text="🔍" Command="{Binding NavigateToValuesCommand}" Margin="0,0,5,0"/>
@@ -21,7 +27,6 @@
             <Button Text="Settings" Command="{Binding NavigateToSettingsCommand}"/>
         </StackLayout>
 
-        <!-- StackLayout for chart and label -->
         <StackLayout Spacing="10">
             <microcharts:ChartView Chart="{Binding Chart}" HeightRequest="300"/>
             <Label Text="{Binding NoDataMessage}"

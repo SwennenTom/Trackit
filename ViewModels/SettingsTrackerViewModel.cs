@@ -8,5 +8,6 @@ namespace Trackit.ViewModels
 {
     class SettingsTrackerViewModel
     {
+
     }
 }

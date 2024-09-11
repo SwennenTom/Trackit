@@ -16,7 +16,7 @@ namespace Trackit.ViewModels
     {
         public ObservableCollection<Tracker> Trackers { get; set; }
         public ICommand AddTrackerCommand { get; }
-        public ICommand OnSwipeCommand { get; }
+        public ICommand OnDeleteCommand { get; }
         public ICommand NavigateToDetailCommand { get; }
         public ICommand ShowHomeInfoCommand { get; }
 
@@ -25,6 +25,17 @@ namespace Trackit.ViewModels
         private readonly Tracker _tracker;
         public string Name => _tracker.name;
 
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged(nameof(IsBusy));
+            }
+        }
+
         private readonly INavigation _navigation;
 
         public HomeViewModel(INavigation navigation)
@@ -32,7 +43,7 @@ namespace Trackit.ViewModels
             Trackers = new ObservableCollection<Tracker>();
 
             AddTrackerCommand = new Command(OnAddTracker);
-            OnSwipeCommand = new Command<Tracker>(OnSwipe);
+            OnDeleteCommand = new Command<Tracker>(OnDelete);
             NavigateToDetailCommand = new Command<Tracker>(OnNavigateToDetail);
             ShowHomeInfoCommand = new Command(OnShowHomeInfo);
             _navigation = navigation;
@@ -40,7 +51,7 @@ namespace Trackit.ViewModels
 
         public async void LoadTrackers()
         {
-
+            IsBusy = true;
             Trackers.Clear();
             var trackersFromDb = await App.Database.GetTrackersAsync();
 
@@ -48,6 +59,7 @@ namespace Trackit.ViewModels
             {
                 Trackers.Add(tracker);
             }
+            IsBusy = false;
         }
 
         private async void OnAddTracker()
@@ -56,22 +68,26 @@ namespace Trackit.ViewModels
         }
 
 
-        private async void OnSwipe(Tracker tracker)
+        private async void OnDelete(Tracker tracker)
         {
                 bool result = await App.Current.MainPage.DisplayAlert("Delete Tracker", $"Are you sure you want to delete {tracker.name}?", "Yes", "No");
 
                 if (result)
                 {
+                    IsBusy = true;
                     Trackers.Remove(tracker);
                     await App.Database.DeleteTrackerAsync(tracker.tracker_id);
+                    IsBusy = false;
                 }
         }
         private async void OnNavigateToDetail(Tracker tracker)
         {
             if (tracker != null)
             {
+                IsBusy=true;
                 // Make sure the tracker object and its ID are valid
                 await _navigation.PushAsync(new Detail(tracker));
+                IsBusy = false;
             }
             else
             {

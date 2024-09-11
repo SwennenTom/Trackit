@@ -37,6 +37,17 @@ namespace Trackit.ViewModels
             }
         }
 
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged(nameof(IsBusy));
+            }
+        }
+
         public ICommand DeleteTrackerCommand { get; }
         public ICommand AddValueCommand { get; }
         public ICommand NavigateToValuesCommand { get; }
@@ -60,8 +71,20 @@ namespace Trackit.ViewModels
 
         private async Task DeleteTrackerAsync()
         {
-            await App.Database.DeleteTrackerAsync(_trackerId);
-            await _navigation.PopAsync();
+            bool isConfirmed = await App.Current.MainPage.DisplayAlert(
+                "Delete Tracker",
+                $"Are you sure you wat to delete {_tracker.name}?",
+                "Yes, delete this tracker.",
+                "No, keep this tracker."
+                );
+
+            if (isConfirmed)
+            {
+                IsBusy = true;
+                await App.Database.DeleteTrackerAsync(_trackerId);
+                IsBusy = false;
+                await _navigation.PopAsync();
+            }
         }
 
         private async Task AddValueAsync()
@@ -84,8 +107,10 @@ namespace Trackit.ViewModels
                     date = DateTime.Now
                 };
 
+                IsBusy = true;
                 await App.Database.AddValueAsync(trackerValue);
                 await LoadChartDataAsync();
+                IsBusy = false;
             }
         }
 
@@ -101,13 +126,14 @@ namespace Trackit.ViewModels
             await Shell.Current.GoToAsync($"settings?trackerId={_trackerId}");
         }
 
-        private async Task LoadChartDataAsync()
+        public async Task LoadChartDataAsync()
         {
             var entries = new List<ChartEntry>();
             var readings = await App.Database.GetValuesForTrackerAsync(_trackerId);
 
             if (readings.Any())
             {
+                IsBusy = true;
                 foreach (var reading in readings)
                 {
                     entries.Add(new ChartEntry(reading.value)
@@ -128,6 +154,7 @@ namespace Trackit.ViewModels
                     BackgroundColor = SKColors.White
                 };
 
+                IsBusy = false;
                 NoDataMessage = string.Empty;
             }
             else
