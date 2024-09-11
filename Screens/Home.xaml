@@ -7,10 +7,6 @@
              BackgroundColor="LightSkyBlue"
              >
 
-    <ContentPage.BindingContext>
-        <vm:HomeViewModel />
-    </ContentPage.BindingContext>
-
     <StackLayout Padding="20" Spacing="10">
 
         <StackLayout Orientation="Horizontal"

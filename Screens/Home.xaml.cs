@@ -9,7 +9,7 @@ public partial class Home : ContentPage
     {
         InitializeComponent();
 
-        BindingContext = new Trackit.ViewModels.HomeViewModel();
+        BindingContext = new Trackit.ViewModels.HomeViewModel(this.Navigation);
     }
 
     protected override void OnAppearing()

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 using Trackit.Models;
+using Trackit.Screens;
 using System.Runtime.CompilerServices;
 
 namespace Trackit.ViewModels
@@ -24,7 +25,9 @@ namespace Trackit.ViewModels
         private readonly Tracker _tracker;
         public string Name => _tracker.name;
 
-        public HomeViewModel()
+        private readonly INavigation _navigation;
+
+        public HomeViewModel(INavigation navigation)
         {
             Trackers = new ObservableCollection<Tracker>();
 
@@ -32,7 +35,7 @@ namespace Trackit.ViewModels
             OnSwipeCommand = new Command<Tracker>(OnSwipe);
             NavigateToDetailCommand = new Command<Tracker>(OnNavigateToDetail);
             ShowHomeInfoCommand = new Command(OnShowHomeInfo);
-
+            _navigation = navigation;
         }
 
         public async void LoadTrackers()
@@ -49,7 +52,7 @@ namespace Trackit.ViewModels
 
         private async void OnAddTracker()
         {
-            await App.Current.MainPage.Navigation.PushAsync(new Trackit.Screens.CreateTracker());
+            await _navigation.PushAsync(new CreateTracker());
         }
 
 
@@ -68,7 +71,7 @@ namespace Trackit.ViewModels
             if (tracker != null)
             {
                 // Make sure the tracker object and its ID are valid
-                await Shell.Current.GoToAsync($"detail?trackerId={tracker.tracker_id}");
+                await _navigation.PushAsync(new Detail(tracker));
             }
             else
             {
