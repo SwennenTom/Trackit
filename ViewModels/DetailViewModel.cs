@@ -148,12 +148,33 @@ namespace Trackit.ViewModels
                         StrokeThickness = 2
                     };
 
+                    var values = readings.Select(r => (double)r.value).ToArray();
+                    var dates = readings.Select(r => DateTimeAxis.ToDouble(r.date)).ToArray();
+
                     foreach (var reading in readings)
                     {
                         lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(reading.date), reading.value));
                     }
 
                     plotModel.Series.Add(lineSeries);
+
+                    int emaPeriod = 7; // Define your EMA period here
+                    var emaValues = CalculateEMA(values, emaPeriod);
+                    var emaSeries = new LineSeries
+                    {
+                        Title = $"EMA ({emaPeriod})",
+                        Color = OxyColors.Orange,
+                        StrokeThickness = 2,
+                        LineStyle = LineStyle.Dash
+                    };
+
+                    for (int i = emaPeriod - 1; i < emaValues.Length; i++)
+                    {
+                        emaSeries.Points.Add(new DataPoint(dates[i], emaValues[i]));
+                    }
+
+                    plotModel.Series.Add(emaSeries);
+
                     plotModel.Axes.Add(new DateTimeAxis
                     {
                         Position = AxisPosition.Bottom,
@@ -171,6 +192,7 @@ namespace Trackit.ViewModels
                     NoDataMessage = "No values yet";
                 }
 
+                
                 PlotModel = plotModel;
                 PlotModel.InvalidatePlot(true); // Force a redraw
             }
@@ -192,6 +214,24 @@ namespace Trackit.ViewModels
                 IsBusy = false;
             }
         }
+
+        private double[] CalculateEMA(double[] values, int period)
+        {
+            var ema = new double[values.Length];
+            if (values.Length == 0 || period <= 0)
+                return ema;
+
+            double multiplier = 2.0 / (period + 1);
+            ema[0] = values[0]; // Start with the first value
+
+            for (int i = 1; i < values.Length; i++)
+            {
+                ema[i] = (values[i] - ema[i - 1]) * multiplier + ema[i - 1];
+            }
+
+            return ema;
+        }
+
 
     }
 }

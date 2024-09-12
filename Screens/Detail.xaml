@@ -13,7 +13,9 @@
         </ResourceDictionary>
     </ContentPage.Resources>
     <ContentPage.Content>
-    <ScrollView Padding="20">
+
+        <ScrollView Padding="20">
+            <StackLayout Spacing="20">
 
         <ActivityIndicator IsVisible="{Binding IsBusy}" 
                                IsRunning="{Binding IsBusy}" 
@@ -28,7 +30,7 @@
             <Button Text="Settings" Command="{Binding NavigateToSettingsCommand}"/>
         </StackLayout>
 
-        <StackLayout Spacing="10">
+        
             <Grid>
             <oxy:PlotView Model="{Binding PlotModel}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HeightRequest="400"/>
             </Grid>
@@ -39,7 +41,7 @@
                    FontSize="Medium"
                    TextColor="Gray"/>
             
-        </StackLayout>
-    </ScrollView>
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>
