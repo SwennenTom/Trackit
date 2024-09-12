@@ -66,10 +66,9 @@ namespace Trackit.ViewModels
             // Save TrackerSettings to database
             await App.Database.AddSettingsAsync(trackerSettings);
 
-            IsBusy = false;
-
             // Navigate back to Home page or refresh the list
             await App.Current.MainPage.Navigation.PopAsync();
+            IsBusy = false;
         }
 
         protected void OnPropertyChanged(string propertyName)

@@ -1,8 +1,9 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Trackit.ViewModels"
-             xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
              xmlns:local="clr-namespace:Trackit.Converters"
+             xmlns:oxy="clr-namespace:OxyPlot.Maui.Skia;assembly=OxyPlot.Maui.Skia"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls"
              x:Class="Trackit.Screens.Detail"
              Title="{Binding Name}">
 
@@ -11,8 +12,8 @@
             <local:NullToBooleanConverter x:Key="NullToBooleanConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-
-    <StackLayout Padding="20" Spacing="10">
+    <ContentPage.Content>
+    <ScrollView Padding="20">
 
         <ActivityIndicator IsVisible="{Binding IsBusy}" 
                                IsRunning="{Binding IsBusy}" 
@@ -28,13 +29,17 @@
         </StackLayout>
 
         <StackLayout Spacing="10">
-            <microcharts:ChartView Chart="{Binding Chart}" HeightRequest="300"/>
+            <Grid>
+            <oxy:PlotView Model="{Binding PlotModel}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HeightRequest="400"/>
+            </Grid>
             <Label Text="{Binding NoDataMessage}"
                    IsVisible="{Binding Chart, Converter={StaticResource NullToBooleanConverter}}"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand"
                    FontSize="Medium"
                    TextColor="Gray"/>
+            
         </StackLayout>
-    </StackLayout>
+    </ScrollView>
+    </ContentPage.Content>
 </ContentPage>

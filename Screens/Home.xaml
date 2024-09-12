@@ -6,8 +6,8 @@
              Title="Trackit"
              BackgroundColor="LightSkyBlue"
              >
-
-    <StackLayout Padding="20" Spacing="10">
+    <ContentPage.Content>
+    <ScrollView Padding="20">
 
         <ActivityIndicator IsVisible="{Binding IsBusy}" 
                                IsRunning="{Binding IsBusy}" 
@@ -61,5 +61,6 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-    </StackLayout>
+    </ScrollView>
+    </ContentPage.Content>
 </ContentPage>

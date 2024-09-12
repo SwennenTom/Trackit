@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microcharts;
 using SkiaSharp;
+using OxyPlot;
+using OxyPlot.Series;
+using OxyPlot.Axes;
 using Trackit.Models;
 using Trackit.Screens;
 
@@ -13,15 +15,15 @@ namespace Trackit.ViewModels
     {
         private int _trackerId;
         private Tracker _tracker;
+        public string Name => _tracker?.name;
 
-        // Other properties and fields
-        private LineChart _chart;
-        public LineChart Chart
+        private PlotModel _plotModel;
+        public PlotModel PlotModel
         {
-            get => _chart;
+            get => _plotModel;
             set
             {
-                _chart = value;
+                _plotModel = value;
                 OnPropertyChanged();
             }
         }
@@ -60,13 +62,16 @@ namespace Trackit.ViewModels
         {
             _trackerId = tracker.tracker_id;
             _tracker = tracker;
+            _navigation = navigation;
+            _page = page;
+
             DeleteTrackerCommand = new Command(async () => await DeleteTrackerAsync());
             AddValueCommand = new Command(async () => await AddValueAsync());
             NavigateToValuesCommand = new Command(async () => await NavigateToValuesAsync());
             NavigateToSettingsCommand = new Command(async () => await NavigateToSettingsAsync());
+
             LoadChartDataAsync();
-            _navigation = navigation;
-            _page = page;
+            
         }
 
         private async Task DeleteTrackerAsync()
@@ -118,7 +123,6 @@ namespace Trackit.ViewModels
         {
             var valuesPage = new Values(_tracker);
             await _navigation.PushAsync(valuesPage);
-            //await _navigation.PushAsync(new Values(_tracker));
         }
 
         private async Task NavigateToSettingsAsync()
@@ -128,40 +132,66 @@ namespace Trackit.ViewModels
 
         public async Task LoadChartDataAsync()
         {
-            var entries = new List<ChartEntry>();
-            var readings = await App.Database.GetValuesForTrackerAsync(_trackerId);
-
-            if (readings.Any())
+            try
             {
                 IsBusy = true;
-                foreach (var reading in readings)
+
+                var readings = await App.Database.GetValuesForTrackerAsync(_trackerId);
+                var plotModel = new PlotModel { Title = _tracker.name };
+
+                if (readings.Any())
                 {
-                    entries.Add(new ChartEntry(reading.value)
+                    var lineSeries = new LineSeries
                     {
-                        Label = reading.date.ToString("MMM dd"),
-                        ValueLabel = reading.value.ToString(),
-                        Color = SKColor.Parse("#68B9C0")
+                        Title = "Values",
+                        Color = OxyColors.SkyBlue,
+                        StrokeThickness = 2
+                    };
+
+                    foreach (var reading in readings)
+                    {
+                        lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(reading.date), reading.value));
+                    }
+
+                    plotModel.Series.Add(lineSeries);
+                    plotModel.Axes.Add(new DateTimeAxis
+                    {
+                        Position = AxisPosition.Bottom,
+                        StringFormat = "MMM dd",
+                        Title = "Date"
+                    });
+                    plotModel.Axes.Add(new LinearAxis
+                    {
+                        Position = AxisPosition.Left,
+                        Title = "Value"
                     });
                 }
-
-                Chart = new LineChart
+                else
                 {
-                    Entries = entries,
-                    LineMode = LineMode.Straight,
-                    LineSize = 10,
-                    PointMode = PointMode.Circle,
-                    PointSize = 18,
-                    BackgroundColor = SKColors.White
-                };
+                    NoDataMessage = "No values yet";
+                }
 
-                IsBusy = false;
-                NoDataMessage = string.Empty;
+                PlotModel = plotModel;
+                PlotModel.InvalidatePlot(true); // Force a redraw
             }
-            else
+            catch (Exception ex)
             {
-                Chart = null;
-                NoDataMessage = "No entries yet";
+                System.Diagnostics.Debug.WriteLine($"Error loading chart data: {ex.Message}");
+
+                await App.Current.MainPage.DisplayAlert(
+                    "Error",
+                    "An error occurred while loading the chart data. Please try again later.",
+                    "OK"
+                );
+
+                // Ensure the UI state is correctly set
+                NoDataMessage = "An error occurred while loading data.";
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
+
     }
 }

@@ -3,8 +3,9 @@ using CommunityToolkit.Maui;
 using Microsoft.Maui;
 using Microsoft.Maui.Hosting;
 using Microsoft.Maui.Controls.Hosting;
-using Microcharts.Maui;
-using SkiaSharp.Views.Maui.Controls.Hosting;
+using OxyPlot.Maui.Skia;
+using SkiaSharp.Views.Maui.Handlers;
+using SkiaSharp.Views.Maui.Controls;
 
 namespace Trackit
 {
@@ -16,7 +17,11 @@ namespace Trackit
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
-                .UseSkiaSharp();
+                .UseOxyPlotSkia()
+                .ConfigureMauiHandlers(handlers =>
+                {
+                    handlers.AddHandler(typeof(SKCanvasView), typeof(SKCanvasViewHandler));
+                });
 
             //Task.Run(async () => await App.Database.AddTestDataAsync()).Wait();
 
