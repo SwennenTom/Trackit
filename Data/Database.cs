@@ -97,7 +97,29 @@ namespace Trackit.Data
 
         public async Task<TrackerSettings> GetSettingsAsync(int trackerId)
         {
-            return await _database.Table<TrackerSettings>().Where(s => s.tracker_id == trackerId).FirstOrDefaultAsync();
+            //return await _database.Table<TrackerSettings>().Where(s => s.tracker_id == trackerId).FirstOrDefaultAsync();
+
+            // Log the trackerId to ensure it's being passed correctly
+            System.Diagnostics.Debug.WriteLine($"Getting settings for trackerId: {trackerId}");
+
+            // Check if any records exist with the given trackerId
+            var count = await _database.Table<TrackerSettings>().Where(s => s.tracker_id == trackerId).CountAsync();
+            System.Diagnostics.Debug.WriteLine($"Number of settings found: {count}");
+
+            // Fetch the actual settings
+            var settings = await _database.Table<TrackerSettings>().Where(s => s.tracker_id == trackerId).FirstOrDefaultAsync();
+
+            if (settings != null)
+            {
+                // Log the settings for debugging purposes
+                System.Diagnostics.Debug.WriteLine($"Settings found: MinThreshold = {settings.min_threshhold}, MaxThreshold = {settings.max_threshold}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("No settings found for the given trackerId.");
+            }
+
+            return settings;
         }
 
         #endregion

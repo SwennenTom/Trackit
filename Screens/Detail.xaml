@@ -17,30 +17,30 @@
         <ScrollView Padding="20">
             <StackLayout Spacing="20">
 
-        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                <ActivityIndicator IsVisible="{Binding IsBusy}" 
                                IsRunning="{Binding IsBusy}" 
                                Color="Blue"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
 
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
-            <Button Text="➕" Command="{Binding AddValueCommand}" Margin="0,0,5,0"/>
-            <Button Text="🔍" Command="{Binding NavigateToValuesCommand}" Margin="0,0,5,0"/>
-            <Button Text="🗑️" Command="{Binding DeleteTrackerCommand}" Margin="0,0,5,0"/>
-            <Button Text="Settings" Command="{Binding NavigateToSettingsCommand}"/>
-        </StackLayout>
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
+                    <Button Text="➕" Command="{Binding AddValueCommand}" Margin="0,0,5,0"/>
+                    <Button Text="🔍" Command="{Binding NavigateToValuesCommand}" Margin="0,0,5,0"/>
+                    <Button Text="🗑️" Command="{Binding DeleteTrackerCommand}" Margin="0,0,5,0"/>
+                    <Button Text="Settings" Command="{Binding NavigateToSettingsCommand}"/>
+                </StackLayout>
 
-        
-            <Grid>
+
+                <Grid>
                     <oxy:PlotView x:Name="plotView" Model="{Binding PlotModel}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HeightRequest="400"/>
-            </Grid>
-            <Label Text="{Binding NoDataMessage}"
+                </Grid>
+                <Label Text="{Binding NoDataMessage}"
                    IsVisible="{Binding Chart, Converter={StaticResource NullToBooleanConverter}}"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand"
                    FontSize="Medium"
                    TextColor="Gray"/>
-            
+
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

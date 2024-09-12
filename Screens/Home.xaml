@@ -7,60 +7,60 @@
              BackgroundColor="LightSkyBlue"
              >
     <ContentPage.Content>
-    <ScrollView Padding="20">
+        <ScrollView Padding="20">
+            <StackLayout Spacing="10">
 
-        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                <ActivityIndicator IsVisible="{Binding IsBusy}" 
                                IsRunning="{Binding IsBusy}" 
                                Color="Blue"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
 
-        <StackLayout Orientation="Horizontal"
+                <StackLayout Orientation="Horizontal"
                      HorizontalOptions="Start"
                      VerticalOptions="Start"
                      Spacing="10">
-            <Label Text="Trackers"
+                    <Label Text="Trackers"
                    FontSize="Large"
                    HorizontalOptions="Start"
                    VerticalOptions="Center" />
 
-            <Button Text="➕" 
+                    <Button Text="➕" 
                     Command="{Binding AddTrackerCommand}" 
                     HorizontalOptions="Center"
                     BackgroundColor="LightBlue"
                     TextColor="Black" />
-            <Button Text="ℹ️" 
+                    <Button Text="ℹ️" 
                     Command="{Binding ShowHomeInfoCommand}" 
                     HorizontalOptions="Center"
                     BackgroundColor="LightBlue"
                     TextColor="Black" />
-        </StackLayout>
+                </StackLayout>
 
-        <CollectionView x:Name="TrackersList"
+                <CollectionView x:Name="TrackersList"
                         ItemsSource="{Binding Trackers}"
                         SelectionMode="Single">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="10">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="10">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer
                                 Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.NavigateToDetailCommand}"
                                 CommandParameter="{Binding .}"/>
-                            <TapGestureRecognizer
+                                    <TapGestureRecognizer
                                 NumberOfTapsRequired="2"
                                 Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.OnDeleteCommand}"
                                 CommandParameter="{Binding .}"/>
-                        </Frame.GestureRecognizers>
-                        <StackLayout>
-                            <Label Text="{Binding tracker_id}" FontSize="Small" />
-                            <Label Text="{Binding name}" FontSize="Medium" HorizontalTextAlignment="Center" />
-                            <Label Text="{Binding description}" FontSize="Small" MaxLines="3"/>
-                        </StackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-    </ScrollView>
+                                </Frame.GestureRecognizers>
+                                <StackLayout>
+                                    <Label Text="{Binding name}" FontSize="Medium" HorizontalTextAlignment="Center" />
+                                    <Label Text="{Binding description}" FontSize="Small" MaxLines="3"/>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

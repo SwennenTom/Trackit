@@ -176,6 +176,41 @@ namespace Trackit.ViewModels
 
                     plotModel.Series.Add(emaSeries);
 
+                    var trackerSettings = await App.Database.GetSettingsAsync(_trackerId);
+                    if (trackerSettings != null)
+                    {
+                        double minThreshold = trackerSettings.min_threshhold;
+                        double maxThreshold = trackerSettings.max_threshold;
+
+                        if (minThreshold != 0) // Use appropriate logic to check if the threshold should be displayed
+                        {
+                            var minThresholdSeries = new LineSeries
+                            {
+                                Title = $"Min Threshold ({minThreshold})",
+                                Color = OxyColors.Red,
+                                StrokeThickness = 3,
+                                LineStyle = LineStyle.Dash
+                            };
+                            minThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMinimum, minThreshold));
+                            minThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMaximum, minThreshold));
+                            plotModel.Series.Add(minThresholdSeries);
+                        }
+
+                        if (maxThreshold != 0) // Use appropriate logic to check if the threshold should be displayed
+                        {
+                            var maxThresholdSeries = new LineSeries
+                            {
+                                Title = $"Max Threshold ({maxThreshold})",
+                                Color = OxyColors.Red,
+                                StrokeThickness = 3,
+                                LineStyle = LineStyle.Dash
+                            };
+                            maxThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMinimum, maxThreshold));
+                            maxThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMaximum, maxThreshold));
+                            plotModel.Series.Add(maxThresholdSeries);
+                        }
+                    }
+
                     plotModel.Axes.Add(new DateTimeAxis
                     {
                         Position = AxisPosition.Bottom,
