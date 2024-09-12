@@ -32,7 +32,7 @@
 
         
             <Grid>
-            <oxy:PlotView Model="{Binding PlotModel}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HeightRequest="400"/>
+                    <oxy:PlotView x:Name="plotView" Model="{Binding PlotModel}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HeightRequest="400"/>
             </Grid>
             <Label Text="{Binding NoDataMessage}"
                    IsVisible="{Binding Chart, Converter={StaticResource NullToBooleanConverter}}"

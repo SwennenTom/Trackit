@@ -1,5 +1,14 @@
+using OxyPlot;
+using OxyPlot.Annotations;
+using OxyPlot.Series;
+using OxyPlot.Maui.Skia;
 using Trackit.Models;
 using Trackit.ViewModels;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Maui.Controls;
+using OxyPlot.Axes;
 
 namespace Trackit.Screens
 {
@@ -22,5 +31,6 @@ namespace Trackit.Screens
                 viewModel.LoadChartDataAsync();
             }
         }
+
     }
 }

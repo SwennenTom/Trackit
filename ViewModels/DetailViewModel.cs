@@ -8,6 +8,7 @@ using OxyPlot.Series;
 using OxyPlot.Axes;
 using Trackit.Models;
 using Trackit.Screens;
+using OxyPlot.Annotations;
 
 namespace Trackit.ViewModels
 {
@@ -179,13 +180,18 @@ namespace Trackit.ViewModels
                     {
                         Position = AxisPosition.Bottom,
                         StringFormat = "MMM dd",
-                        Title = "Date"
+                        Title = "Date",
+                        MajorGridlineStyle = LineStyle.Solid,
+                        MinorGridlineStyle = LineStyle.Dot
                     });
                     plotModel.Axes.Add(new LinearAxis
                     {
                         Position = AxisPosition.Left,
-                        Title = "Value"
+                        Title = "Value",
+                        MajorGridlineStyle = LineStyle.Solid,
+                        MinorGridlineStyle = LineStyle.Dot
                     });
+
                 }
                 else
                 {
