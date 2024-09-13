@@ -2,11 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Trackit.Screens.EditValue"
-             Title="EditValue">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+             Title="Edit Value">
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <Label Text="Value" FontSize="Medium"/>
+        <Entry Text="{Binding Value}" Keyboard="Numeric" Placeholder="Enter value" />
+
+        <Label Text="Date" FontSize="Medium"/>
+        <DatePicker Date="{Binding Date}" />
+
+        <Label Text="Time" FontSize="Medium"/>
+        <TimePicker Time="{Binding Time}" />
+
+        <HorizontalStackLayout Spacing="10">
+            <Button Text="Save" Command="{Binding SaveCommand}" />
+            <Button Text="Cancel" Command="{Binding CancelCommand}" />
+        </HorizontalStackLayout>
+
     </VerticalStackLayout>
 </ContentPage>

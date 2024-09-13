@@ -10,7 +10,7 @@ public partial class Values : ContentPage
 	{
 		InitializeComponent();
 		_tracker = tracker;
-        BindingContext = new ValuesViewModel(tracker);
+        BindingContext = new ValuesViewModel(this.Navigation, tracker);
     }
 
     protected override void OnAppearing()

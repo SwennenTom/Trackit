@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Trackit.Models;
+using Trackit.Screens;
 
 namespace Trackit.ViewModels
 {
@@ -17,6 +18,8 @@ namespace Trackit.ViewModels
 
         public ICommand EditValueCommand { get; set; }
         public ICommand DeleteValueCommand { get; set; }
+
+        private readonly INavigation _navigation;
 
         private bool _isBusy;
         public bool IsBusy
@@ -30,14 +33,15 @@ namespace Trackit.ViewModels
         }
 
 
-        public ValuesViewModel(Tracker tracker)
+        public ValuesViewModel(INavigation navigation, Tracker tracker)
         {
             _tracker = tracker;
 
             EditValueCommand = new Command<TrackerValues>(async (value) => await OnEditValue(value));
             DeleteValueCommand = new Command<TrackerValues>(async (value) => await OnDeleteValue(value));
 
-            //LoadTrackerValues();
+            _navigation = navigation;
+
         }
 
         public async Task LoadTrackerValues()
@@ -46,7 +50,9 @@ namespace Trackit.ViewModels
             trackerValues.Clear();
             var valuesFromDb = await App.Database.GetValuesForTrackerAsync(_tracker.tracker_id);
 
-            foreach (var value in valuesFromDb)
+            var reversedValues = valuesFromDb.OrderByDescending(v => v.date);
+
+            foreach (var value in reversedValues)
             {
                 trackerValues.Add(value);
             }
@@ -54,7 +60,7 @@ namespace Trackit.ViewModels
         }
         private async Task OnEditValue(TrackerValues value)
         {
-            // Logic to edit the value, e.g., showing a prompt and updating the database
+            await _navigation.PushAsync(new EditValue(value));
         }
 
         private async Task OnDeleteValue(TrackerValues value)

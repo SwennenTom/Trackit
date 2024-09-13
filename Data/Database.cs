@@ -51,6 +51,7 @@ namespace Trackit.Data
             return await _database
                 .Table<Tracker>()
                 .Where(t => t.tracker_id == trackerId)
+                .OrderByDescending(s =>s.created_at)
                 .FirstOrDefaultAsync();
         }
 
@@ -74,7 +75,10 @@ namespace Trackit.Data
 
         public async Task<List<TrackerValues>> GetValuesForTrackerAsync(int trackerId)
         {
-            return await _database.Table<TrackerValues>().Where(v => v.tracker_id == trackerId).ToListAsync();
+            return await _database.Table<TrackerValues>()
+                .Where(v => v.tracker_id == trackerId)
+                .OrderBy(s => s.date)
+                .ToListAsync();
         }
 
         #endregion

@@ -12,7 +12,6 @@ namespace Trackit.Models
         [PrimaryKey, AutoIncrement]
         public int settings_id { get; set; }
 
-        [Indexed]
         public int tracker_id { get; set; }
 
         public double min_threshhold { get; set; }

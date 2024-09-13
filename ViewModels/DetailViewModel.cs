@@ -16,7 +16,7 @@ namespace Trackit.ViewModels
     {
         private int _trackerId;
         private Tracker _tracker;
-        public string Name => _tracker?.name;
+        public string? Name => _tracker?.name;
 
         private PlotModel _plotModel;
         public PlotModel PlotModel
@@ -138,6 +138,8 @@ namespace Trackit.ViewModels
                 IsBusy = true;
 
                 var readings = await App.Database.GetValuesForTrackerAsync(_trackerId);
+
+                var trackerSettings = await App.Database.GetSettingsAsync(_trackerId);
                 var plotModel = new PlotModel { Title = _tracker.name };
 
                 if (readings.Any())
@@ -176,7 +178,7 @@ namespace Trackit.ViewModels
 
                     plotModel.Series.Add(emaSeries);
 
-                    var trackerSettings = await App.Database.GetSettingsAsync(_trackerId);
+                    
                     if (trackerSettings != null)
                     {
                         double minThreshold = trackerSettings.min_threshhold;
@@ -209,6 +211,10 @@ namespace Trackit.ViewModels
                             maxThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMaximum, maxThreshold));
                             plotModel.Series.Add(maxThresholdSeries);
                         }
+                    }
+                    else
+                    {
+                        NoDataMessage = "No settings found.";
                     }
 
                     plotModel.Axes.Add(new DateTimeAxis

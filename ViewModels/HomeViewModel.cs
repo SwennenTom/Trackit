@@ -46,6 +46,7 @@ namespace Trackit.ViewModels
             OnDeleteCommand = new Command<Tracker>(OnDelete);
             NavigateToDetailCommand = new Command<Tracker>(OnNavigateToDetail);
             ShowHomeInfoCommand = new Command(OnShowHomeInfo);
+
             _navigation = navigation;
         }
 
