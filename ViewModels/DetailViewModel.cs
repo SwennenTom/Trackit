@@ -128,8 +128,17 @@ namespace Trackit.ViewModels
 
         private async Task NavigateToSettingsAsync()
         {
-            await Shell.Current.GoToAsync($"settings?trackerId={_trackerId}");
+            var settings = await App.Database.GetSettingsAsync(_trackerId);
+            if (settings != null)
+            {
+                await _navigation.PushAsync(new SettingsTracker(settings));
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Error", "Settings not found.", "OK");
+            }
         }
+
 
         public async Task LoadChartDataAsync()
         {
@@ -138,8 +147,14 @@ namespace Trackit.ViewModels
                 IsBusy = true;
 
                 var readings = await App.Database.GetValuesForTrackerAsync(_trackerId);
-
                 var trackerSettings = await App.Database.GetSettingsAsync(_trackerId);
+
+                if (readings == null || trackerSettings == null)
+                {
+                    NoDataMessage = "Data retrieval error.";
+                    return;
+                }
+
                 var plotModel = new PlotModel { Title = _tracker.name };
 
                 if (readings.Any())
@@ -151,9 +166,6 @@ namespace Trackit.ViewModels
                         StrokeThickness = 2
                     };
 
-                    var values = readings.Select(r => (double)r.value).ToArray();
-                    var dates = readings.Select(r => DateTimeAxis.ToDouble(r.date)).ToArray();
-
                     foreach (var reading in readings)
                     {
                         lineSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(reading.date), reading.value));
@@ -162,7 +174,7 @@ namespace Trackit.ViewModels
                     plotModel.Series.Add(lineSeries);
 
                     int emaPeriod = 7; // Define your EMA period here
-                    var emaValues = CalculateEMA(values, emaPeriod);
+                    var emaValues = CalculateEMA(readings.Select(r => (double)r.value).ToArray(), emaPeriod);
                     var emaSeries = new LineSeries
                     {
                         Title = $"EMA ({emaPeriod})",
@@ -173,43 +185,68 @@ namespace Trackit.ViewModels
 
                     for (int i = emaPeriod - 1; i < emaValues.Length; i++)
                     {
-                        emaSeries.Points.Add(new DataPoint(dates[i], emaValues[i]));
+                        emaSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(readings[i].date), emaValues[i]));
                     }
 
                     plotModel.Series.Add(emaSeries);
 
-                    
+                    // Add axes
+                    var dateAxis = new DateTimeAxis
+                    {
+                        Position = AxisPosition.Bottom,
+                        StringFormat = "MMM dd",
+                        Title = "Date",
+                        MajorGridlineStyle = LineStyle.Solid,
+                        MinorGridlineStyle = LineStyle.Dot
+                    };
+                    plotModel.Axes.Add(dateAxis);
+
+                    var valueAxis = new LinearAxis
+                    {
+                        Position = AxisPosition.Left,
+                        Title = "Value",
+                        MajorGridlineStyle = LineStyle.Solid,
+                        MinorGridlineStyle = LineStyle.Dot
+                    };
+                    plotModel.Axes.Add(valueAxis);
+
+                    // Invalidate plot to recalculate axis ranges
+                    plotModel.InvalidatePlot(true);
+
+                    // Add LineAnnotations for thresholds
                     if (trackerSettings != null)
                     {
                         double minThreshold = trackerSettings.min_threshhold;
                         double maxThreshold = trackerSettings.max_threshold;
 
-                        if (minThreshold != 0) // Use appropriate logic to check if the threshold should be displayed
+                        if (minThreshold != 0)
                         {
-                            var minThresholdSeries = new LineSeries
+                            var minThresholdAnnotation = new LineAnnotation
                             {
-                                Title = $"Min Threshold ({minThreshold})",
+                                Text = $"Min Threshold ({minThreshold})",
+                                Type = LineAnnotationType.Horizontal,
+                                LineStyle = LineStyle.Dash,
                                 Color = OxyColors.Red,
                                 StrokeThickness = 3,
-                                LineStyle = LineStyle.Dash
+                                Y = minThreshold,
+                                X = 0
                             };
-                            minThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMinimum, minThreshold));
-                            minThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMaximum, minThreshold));
-                            plotModel.Series.Add(minThresholdSeries);
+                            plotModel.Annotations.Add(minThresholdAnnotation);
                         }
 
-                        if (maxThreshold != 0) // Use appropriate logic to check if the threshold should be displayed
+                        if (maxThreshold != 0)
                         {
-                            var maxThresholdSeries = new LineSeries
+                            var maxThresholdAnnotation = new LineAnnotation
                             {
-                                Title = $"Max Threshold ({maxThreshold})",
+                                Text = $"Max Threshold ({maxThreshold})",
+                                Type = LineAnnotationType.Horizontal,
+                                LineStyle = LineStyle.Dash,
                                 Color = OxyColors.Red,
                                 StrokeThickness = 3,
-                                LineStyle = LineStyle.Dash
+                                Y = maxThreshold,
+                                X = 0
                             };
-                            maxThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMinimum, maxThreshold));
-                            maxThresholdSeries.Points.Add(new DataPoint(plotModel.Axes[0].ActualMaximum, maxThreshold));
-                            plotModel.Series.Add(maxThresholdSeries);
+                            plotModel.Annotations.Add(maxThresholdAnnotation);
                         }
                     }
                     else
@@ -217,35 +254,18 @@ namespace Trackit.ViewModels
                         NoDataMessage = "No settings found.";
                     }
 
-                    plotModel.Axes.Add(new DateTimeAxis
-                    {
-                        Position = AxisPosition.Bottom,
-                        StringFormat = "MMM dd",
-                        Title = "Date",
-                        MajorGridlineStyle = LineStyle.Solid,
-                        MinorGridlineStyle = LineStyle.Dot
-                    });
-                    plotModel.Axes.Add(new LinearAxis
-                    {
-                        Position = AxisPosition.Left,
-                        Title = "Value",
-                        MajorGridlineStyle = LineStyle.Solid,
-                        MinorGridlineStyle = LineStyle.Dot
-                    });
-
                 }
                 else
                 {
                     NoDataMessage = "No values yet";
                 }
 
-                
                 PlotModel = plotModel;
                 PlotModel.InvalidatePlot(true); // Force a redraw
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error loading chart data: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error loading chart data: {ex}");
 
                 await App.Current.MainPage.DisplayAlert(
                     "Error",
@@ -253,7 +273,6 @@ namespace Trackit.ViewModels
                     "OK"
                 );
 
-                // Ensure the UI state is correctly set
                 NoDataMessage = "An error occurred while loading data.";
             }
             finally
@@ -261,6 +280,10 @@ namespace Trackit.ViewModels
                 IsBusy = false;
             }
         }
+
+
+
+
 
         private double[] CalculateEMA(double[] values, int period)
         {

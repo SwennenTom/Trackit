@@ -34,41 +34,75 @@ namespace Trackit.ViewModels
 
         private async void OnCreateTracker()
         {
-            // Convert threshold inputs to integers
-            bool isMinValid = int.TryParse(MinThreshold, out int minThreshold);
-            bool isMaxValid = int.TryParse(MaxThreshold, out int maxThreshold);
-
-            if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || !isMinValid || !isMaxValid)
+            try
             {
-                await App.Current.MainPage.DisplayAlert("Error", "Please fill out all fields correctly.", "OK");
-                return;
+                // Convert threshold inputs to integers
+                bool isMinValid = int.TryParse(MinThreshold, out int minThreshold);
+                bool isMaxValid = int.TryParse(MaxThreshold, out int maxThreshold);
+
+                if (string.IsNullOrWhiteSpace(Name) || string.IsNullOrWhiteSpace(Description) || !isMinValid || !isMaxValid)
+                {
+                    await App.Current.MainPage.DisplayAlert("Error", "Please fill out all fields correctly.", "OK");
+                    return;
+                }
+
+                // Create new Tracker object
+                var newTracker = new Tracker
+                {
+                    name = Name,
+                    description = Description
+                };
+
+                IsBusy = true;
+                int trackerId = await App.Database.AddTrackerAsync(newTracker);
+
+                if (trackerId <= 0)
+                {
+                    await App.Current.MainPage.DisplayAlert("Error", "Failed to save the tracker.", "OK");
+                    IsBusy = false;
+                    return;
+                }
+
+                // Fetch the newly created tracker to get the correct trackerId
+                var savedTracker = await App.Database.GetTrackerByNameAsync(Name);
+
+                if (savedTracker == null)
+                {
+                    await App.Current.MainPage.DisplayAlert("Error", "Failed to retrieve the newly created tracker.", "OK");
+                    IsBusy = false;
+                    return;
+                }
+
+                var trackerSettings = new TrackerSettings
+                {
+                    min_threshhold = minThreshold,
+                    max_threshold = maxThreshold,
+                    tracker_id = savedTracker.tracker_id
+                };
+
+                // Save TrackerSettings to database
+                int result = await App.Database.AddSettingsAsync(trackerSettings);
+
+                if (result <= 0)
+                {
+                    await App.Current.MainPage.DisplayAlert("Error", "Failed to save settings.", "OK");
+                }
+
+                // Navigate back to Home page or refresh the list
+                await App.Current.MainPage.Navigation.PopAsync();
             }
-
-            // Create new Tracker object
-            var newTracker = new Tracker
+            catch (Exception ex)
             {
-                name = Name,
-                description = Description
-            };
+                // Log the exception
+                System.Diagnostics.Debug.WriteLine($"Error creating tracker: {ex.Message}");
 
-            // Create new TrackerSettings object with the thresholds
-            var trackerSettings = new TrackerSettings
+                // Display an error message to the user
+                await App.Current.MainPage.DisplayAlert("Error", "An error occurred while creating the tracker. Please try again.", "OK");
+            }
+            finally
             {
-                min_threshhold = minThreshold,
-                max_threshold = maxThreshold,
-                tracker_id = newTracker.tracker_id
-            };
-
-            IsBusy = true;
-            // Save Tracker to database with the linked SettingsId
-            await App.Database.AddTrackerAsync(newTracker);
-
-            // Save TrackerSettings to database
-            await App.Database.AddSettingsAsync(trackerSettings);
-
-            // Navigate back to Home page or refresh the list
-            await App.Current.MainPage.Navigation.PopAsync();
-            IsBusy = false;
+                IsBusy = false;
+            }
         }
 
         protected void OnPropertyChanged(string propertyName)

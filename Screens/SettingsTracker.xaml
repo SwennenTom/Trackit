@@ -2,19 +2,42 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Trackit.Screens.SettingsTracker"
-             Title="SettingsTracker">
-    <VerticalStackLayout>
-        
-<!--Keep the activity indicator at all times!-->
-        <ActivityIndicator IsVisible="{Binding IsBusy}" 
-                               IsRunning="{Binding IsBusy}" 
-                               Color="Blue"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
+             Title="Settings Tracker">
 
-        <Label 
-            Text="Welcome to the Settings page!!!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <!-- Activity Indicator -->
+        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                           IsRunning="{Binding IsBusy}" 
+                           Color="Blue"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+
+        <!-- Minimum Threshold -->
+        <Label Text="Minimum Threshold:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+        <Entry Text="{Binding MinThreshold, Mode=TwoWay}"
+               Keyboard="Numeric"
+               Placeholder="Enter minimum threshold"
+               VerticalOptions="Center"
+               HorizontalOptions="FillAndExpand" />
+
+        <!-- Maximum Threshold -->
+        <Label Text="Maximum Threshold:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+        <Entry Text="{Binding MaxThreshold, Mode=TwoWay}"
+               Keyboard="Numeric"
+               Placeholder="Enter maximum threshold"
+               VerticalOptions="Center"
+               HorizontalOptions="FillAndExpand" />
+
+        <!-- Save Button -->
+        <Button Text="Save"
+                Command="{Binding SaveCommand}"
+                VerticalOptions="End"
+                HorizontalOptions="FillAndExpand" />
     </VerticalStackLayout>
 </ContentPage>

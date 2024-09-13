@@ -89,6 +89,15 @@ namespace Trackit.Data
             return await _database.InsertAsync(setting);
         }
 
+        public async Task<Tracker> GetTrackerByNameAsync(string name)
+        {
+            var tracker = await _database.Table<Tracker>()
+                                  .Where(t => t.name == name)
+                                  .FirstOrDefaultAsync();
+
+            return tracker;
+        }
+
         public async Task<int> DeleteSettingsAsync(TrackerSettings setting)
         {
             return await _database.DeleteAsync(setting);

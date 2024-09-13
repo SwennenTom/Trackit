@@ -5,10 +5,6 @@
              x:Class="Trackit.Screens.CreateTracker"
              Title="CreateTracker">
 
-    <ContentPage.BindingContext>
-        <vm:CreateTrackerViewModel/>
-    </ContentPage.BindingContext>
-
     <StackLayout Padding="20" Spacing="15">
         
         <ActivityIndicator IsVisible="{Binding IsBusy}" 
