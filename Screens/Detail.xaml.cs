@@ -17,6 +17,7 @@ namespace Trackit.Screens
         public Detail(Tracker tracker)
         {
             InitializeComponent();
+            this.BackgroundImageSource = "bg1.png";
             BindingContext = new DetailViewModel(tracker, this.Navigation, this);
         }
 

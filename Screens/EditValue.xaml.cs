@@ -8,6 +8,7 @@ public partial class EditValue : ContentPage
 	public EditValue(TrackerValues trackerValue)
 	{
 		InitializeComponent();
-		BindingContext = new EditValuesViewModel(this.Navigation, trackerValue);
+        this.BackgroundImageSource = "bg1.png";
+        BindingContext = new EditValuesViewModel(this.Navigation, trackerValue);
 	}
 }

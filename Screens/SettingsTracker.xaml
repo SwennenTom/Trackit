@@ -4,40 +4,120 @@
              x:Class="Trackit.Screens.SettingsTracker"
              Title="Settings Tracker">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
-        <!-- Activity Indicator -->
-        <ActivityIndicator IsVisible="{Binding IsBusy}" 
+    <ScrollView Padding="20">
+        <StackLayout>
+            <!-- Activity Indicator -->
+            <ActivityIndicator IsVisible="{Binding IsBusy}" 
                            IsRunning="{Binding IsBusy}" 
                            Color="Blue"
                            HorizontalOptions="Center"
                            VerticalOptions="Center" />
 
-        <!-- Minimum Threshold -->
-        <Label Text="Minimum Threshold:"
+            <!-- Minimum Threshold -->
+            <Label Text="Minimum Threshold:"
                FontSize="Medium"
                VerticalOptions="Center"
                HorizontalOptions="Start" />
-        <Entry Text="{Binding MinThreshold, Mode=TwoWay}"
+            <Entry Text="{Binding MinThreshold, Mode=TwoWay}"
                Keyboard="Numeric"
                Placeholder="Enter minimum threshold"
                VerticalOptions="Center"
                HorizontalOptions="FillAndExpand" />
 
-        <!-- Maximum Threshold -->
-        <Label Text="Maximum Threshold:"
+            <!-- Maximum Threshold -->
+            <Label Text="Maximum Threshold:"
                FontSize="Medium"
                VerticalOptions="Center"
                HorizontalOptions="Start" />
-        <Entry Text="{Binding MaxThreshold, Mode=TwoWay}"
+            <Entry Text="{Binding MaxThreshold, Mode=TwoWay}"
                Keyboard="Numeric"
                Placeholder="Enter maximum threshold"
                VerticalOptions="Center"
                HorizontalOptions="FillAndExpand" />
 
-        <!-- Save Button -->
-        <Button Text="Save"
-                Command="{Binding SaveCommand}"
-                VerticalOptions="End"
-                HorizontalOptions="FillAndExpand" />
-    </VerticalStackLayout>
+            <!-- Straight Line -->
+            <Grid>
+                <Label Text="Straight Line:"
+               FontSize="Medium"
+               VerticalOptions="Start"
+               HorizontalOptions="Start" />
+                <Switch IsToggled="{Binding Straight, Mode=TwoWay}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Splines -->
+            <Grid>
+                <Label Text="Splines:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+                <Switch IsToggled="{Binding Splines, Mode=TwoWay}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Stepped -->
+            <Grid>
+                <Label Text="Stepped Line:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+                <Switch IsToggled="{Binding Stepped, Mode=TwoWay}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Scatter Plot -->
+            <Grid>
+                <Label Text="Scatter Plot:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+                <Switch IsToggled="{Binding Scatter, Mode=TwoWay}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Mark Area -->
+            <Grid>
+                <Label Text="Mark Area:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+                <Switch IsToggled="{Binding MarkArea, Mode=TwoWay}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Show Min Threshold -->
+            <Grid>
+                <Label Text="Show Min Threshold:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+                <Switch IsToggled="{Binding ShowMinThreshold, Mode=TwoWay}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Show Max Threshold -->
+            <Grid>
+                <Label Text="Show Max Threshold:"
+               FontSize="Medium"
+               VerticalOptions="Center"
+               HorizontalOptions="Start" />
+                <Switch IsToggled="{Binding ShowMaxThreshold, Mode=TwoWay}"
+                VerticalOptions="Center"
+                HorizontalOptions="End" />
+            </Grid>
+
+            <!-- Save Button -->
+            <Button Text="Save"
+        Command="{Binding SaveCommand}"
+        VerticalOptions="End"
+        HorizontalOptions="FillAndExpand" />
+
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

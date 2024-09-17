@@ -7,6 +7,7 @@ public partial class CreateTracker : ContentPage
 	public CreateTracker()
 	{
 		InitializeComponent();
-		BindingContext = new CreateTrackerViewModel();
+        this.BackgroundImageSource = "bg1.png";
+        BindingContext = new CreateTrackerViewModel();
 	}
 }

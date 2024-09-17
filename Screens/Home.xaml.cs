@@ -9,6 +9,7 @@ public partial class Home : ContentPage
     {
         InitializeComponent();
 
+        this.BackgroundImageSource = "bg1.png";
         BindingContext = new HomeViewModel(this.Navigation);
     }
 

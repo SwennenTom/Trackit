@@ -8,6 +8,7 @@ public partial class SettingsTracker : ContentPage
 	public SettingsTracker(TrackerSettings settings)
 	{
 		InitializeComponent();
-		BindingContext = new SettingsTrackerViewModel(settings);
+        this.BackgroundImageSource = "bg1.png";
+        BindingContext = new SettingsTrackerViewModel(settings);
 	}
 }

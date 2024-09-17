@@ -9,7 +9,8 @@ public partial class Values : ContentPage
 	public Values(Tracker tracker)
 	{
 		InitializeComponent();
-		_tracker = tracker;
+        this.BackgroundImageSource = "bg1.png";
+        _tracker = tracker;
         BindingContext = new ValuesViewModel(this.Navigation, tracker);
     }
 

@@ -29,6 +29,17 @@ namespace Trackit.ViewModels
             }
         }
 
+        private string _description;
+
+        public string Description
+        {
+            get => _description;
+            set
+            {
+                _description = value;
+            }
+        }
+
         private string _noDataMessage;
         public string NoDataMessage
         {
@@ -65,6 +76,7 @@ namespace Trackit.ViewModels
             _tracker = tracker;
             _navigation = navigation;
             _page = page;
+            _description = tracker.description;
 
             DeleteTrackerCommand = new Command(async () => await DeleteTrackerAsync());
             AddValueCommand = new Command(async () => await AddValueAsync());
@@ -155,7 +167,7 @@ namespace Trackit.ViewModels
                     return;
                 }
 
-                var plotModel = new PlotModel { Title = _tracker.name };
+                var plotModel = new PlotModel { /*Title = _tracker.name*/ };
 
                 if (readings.Any())
                 {
@@ -225,9 +237,9 @@ namespace Trackit.ViewModels
                             {
                                 Text = $"Min Threshold ({minThreshold})",
                                 Type = LineAnnotationType.Horizontal,
-                                LineStyle = LineStyle.Dash,
+                                LineStyle = LineStyle.Solid,
                                 Color = OxyColors.Red,
-                                StrokeThickness = 3,
+                                StrokeThickness = 1,
                                 Y = minThreshold,
                                 X = 0
                             };
@@ -240,9 +252,9 @@ namespace Trackit.ViewModels
                             {
                                 Text = $"Max Threshold ({maxThreshold})",
                                 Type = LineAnnotationType.Horizontal,
-                                LineStyle = LineStyle.Dash,
+                                LineStyle = LineStyle.Solid,
                                 Color = OxyColors.Red,
-                                StrokeThickness = 3,
+                                StrokeThickness = 1,
                                 Y = maxThreshold,
                                 X = 0
                             };
