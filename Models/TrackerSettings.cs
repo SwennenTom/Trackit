@@ -24,5 +24,6 @@ namespace Trackit.Models
         public bool markArea { get; set; } = false;
         public bool showMinThreshold { get; set; } = true;
         public bool showMaxThreshold { get; set; } = true;
+        public bool showTrendLine { get; set; } = true;
     }
 }

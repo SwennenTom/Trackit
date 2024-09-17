@@ -24,17 +24,20 @@
                    FontSize="Large"
                    HorizontalOptions="Start"
                    VerticalOptions="Center" />
-
+                    <Frame Padding="2" Margin="2" BorderColor="LightSteelBlue" BackgroundColor="LightSteelBlue" CornerRadius="10" HasShadow="True">
                     <Button Text="➕" 
                     Command="{Binding AddTrackerCommand}" 
                     HorizontalOptions="Center"
                     BackgroundColor="LightBlue"
                     TextColor="Black" />
-                    <Button Text="ℹ️" 
+                    </Frame>
+                    <Frame Padding="2" Margin="2" BorderColor="LightSteelBlue" BackgroundColor="LightSteelBlue" CornerRadius="10" HasShadow="True">
+                        <Button Text="ℹ️" 
                     Command="{Binding ShowHomeInfoCommand}" 
                     HorizontalOptions="Center"
                     BackgroundColor="LightBlue"
                     TextColor="Black" />
+                    </Frame>
                 </StackLayout>
 
                 <CollectionView x:Name="TrackersList"
@@ -42,20 +45,22 @@
                         SelectionMode="Single">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="10">
-                                <Frame.GestureRecognizers>
-                                    <TapGestureRecognizer
+                            <Frame Padding="0" Margin="0" BorderColor="LightSteelBlue" CornerRadius="10" BackgroundColor="LightBlue" HasShadow="True">
+                                <Frame Padding="10" Margin="2" BackgroundColor="White" CornerRadius="8" HasShadow="True">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer
                                 Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.NavigateToDetailCommand}"
                                 CommandParameter="{Binding .}"/>
-                                    <TapGestureRecognizer
+                                        <TapGestureRecognizer
                                 NumberOfTapsRequired="2"
                                 Command="{Binding Source={x:Reference TrackersList}, Path=BindingContext.OnDeleteCommand}"
                                 CommandParameter="{Binding .}"/>
-                                </Frame.GestureRecognizers>
-                                <StackLayout>
-                                    <Label Text="{Binding name}" FontSize="Medium" HorizontalTextAlignment="Center" />
-                                    <Label Text="{Binding description}" FontSize="Small" MaxLines="3"/>
-                                </StackLayout>
+                                    </Frame.GestureRecognizers>
+                                    <StackLayout>
+                                        <Label Text="{Binding name}" FontSize="Medium" HorizontalTextAlignment="Center" />
+                                        <Label Text="{Binding description}" FontSize="Small" MaxLines="3"/>
+                                    </StackLayout>
+                                </Frame>
                             </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

@@ -167,16 +167,53 @@ namespace Trackit.ViewModels
                     return;
                 }
 
-                var plotModel = new PlotModel { /*Title = _tracker.name*/ };
+                var plotModel = new PlotModel();
 
                 if (readings.Any())
                 {
-                    var lineSeries = new LineSeries
+                    var firstDate = readings.Min(r => r.date);
+                    var lastDate = readings.Max(r => r.date);
+
+                    LineSeries lineSeries = new LineSeries
                     {
                         Title = "Values",
                         Color = OxyColors.SkyBlue,
                         StrokeThickness = 2
                     };
+
+                    // Modify lineSeries based on tracker settings
+                    if (trackerSettings.stepped)
+                    {
+                        lineSeries = new StairStepSeries
+                        {
+                            Color = OxyColors.SkyBlue,
+                            StrokeThickness = 2
+                        };
+                    }
+                    else if (trackerSettings.splines)
+                    {
+                        lineSeries = new LineSeries
+                        {
+                            InterpolationAlgorithm = InterpolationAlgorithms.CanonicalSpline,
+                            StrokeThickness = 2,
+                            Color = OxyColors.SkyBlue
+                        };
+                    }
+
+                    if (trackerSettings.scatter)
+                    {
+                        var scatterSeries = new ScatterSeries
+                        {
+                            MarkerType = MarkerType.Circle,
+                            MarkerSize = 4,
+                            MarkerFill = OxyColors.Blue
+                        };
+                        foreach (var reading in readings)
+                        {
+                            scatterSeries.Points.Add(new ScatterPoint(DateTimeAxis.ToDouble(reading.date), reading.value));
+                        }
+                        plotModel.Series.Add(scatterSeries);
+                    }
 
                     foreach (var reading in readings)
                     {
@@ -185,22 +222,27 @@ namespace Trackit.ViewModels
 
                     plotModel.Series.Add(lineSeries);
 
-                    int emaPeriod = 7; // Define your EMA period here
-                    var emaValues = CalculateEMA(readings.Select(r => (double)r.value).ToArray(), emaPeriod);
-                    var emaSeries = new LineSeries
+                    // Add EMA series
+                    if (trackerSettings.showTrendLine)
                     {
-                        Title = $"EMA ({emaPeriod})",
-                        Color = OxyColors.Orange,
-                        StrokeThickness = 2,
-                        LineStyle = LineStyle.Dash
-                    };
+                        int emaPeriod = 7; // Define your EMA period here
+                        var emaValues = CalculateEMA(readings.Select(r => (double)r.value).ToArray(), emaPeriod);
+                        var emaSeries = new LineSeries
+                        {
+                            Title = $"EMA ({emaPeriod})",
+                            Color = OxyColors.Orange,
+                            StrokeThickness = 2,
+                            LineStyle = LineStyle.Dash
+                        };
 
-                    for (int i = emaPeriod - 1; i < emaValues.Length; i++)
-                    {
-                        emaSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(readings[i].date), emaValues[i]));
+                        for (int i = emaPeriod - 1; i < emaValues.Length; i++)
+                        {
+                            emaSeries.Points.Add(new DataPoint(DateTimeAxis.ToDouble(readings[i].date), emaValues[i]));
+                        }
+
+                        plotModel.Series.Add(emaSeries);
                     }
-
-                    plotModel.Series.Add(emaSeries);
+                    
 
                     // Add axes
                     var dateAxis = new DateTimeAxis
@@ -231,7 +273,7 @@ namespace Trackit.ViewModels
                         double minThreshold = trackerSettings.min_threshhold;
                         double maxThreshold = trackerSettings.max_threshold;
 
-                        if (minThreshold != 0)
+                        if (trackerSettings.showMinThreshold)
                         {
                             var minThresholdAnnotation = new LineAnnotation
                             {
@@ -246,7 +288,7 @@ namespace Trackit.ViewModels
                             plotModel.Annotations.Add(minThresholdAnnotation);
                         }
 
-                        if (maxThreshold != 0)
+                        if (trackerSettings.showMaxThreshold)
                         {
                             var maxThresholdAnnotation = new LineAnnotation
                             {
@@ -292,6 +334,8 @@ namespace Trackit.ViewModels
                 IsBusy = false;
             }
         }
+
+
 
 
 

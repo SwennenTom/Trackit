@@ -39,7 +39,7 @@
             <Grid>
                 <Label Text="Straight Line:"
                FontSize="Medium"
-               VerticalOptions="Start"
+               VerticalOptions="Center"
                HorizontalOptions="Start" />
                 <Switch IsToggled="{Binding Straight, Mode=TwoWay}"
                 VerticalOptions="Center"
@@ -79,17 +79,6 @@
                 HorizontalOptions="End" />
             </Grid>
 
-            <!-- Mark Area -->
-            <Grid>
-                <Label Text="Mark Area:"
-               FontSize="Medium"
-               VerticalOptions="Center"
-               HorizontalOptions="Start" />
-                <Switch IsToggled="{Binding MarkArea, Mode=TwoWay}"
-                VerticalOptions="Center"
-                HorizontalOptions="End" />
-            </Grid>
-
             <!-- Show Min Threshold -->
             <Grid>
                 <Label Text="Show Min Threshold:"
@@ -110,6 +99,16 @@
                 <Switch IsToggled="{Binding ShowMaxThreshold, Mode=TwoWay}"
                 VerticalOptions="Center"
                 HorizontalOptions="End" />
+            </Grid>
+
+            <Grid>
+                <Label Text="Show Trend Line:"
+                       FontSize="Medium"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Start"/>
+                <Switch IsToggled="{Binding ShowTrendLine, Mode=TwoWay}"
+                        VerticalOptions="Center"
+                        HorizontalOptions="End"/>
             </Grid>
 
             <!-- Save Button -->

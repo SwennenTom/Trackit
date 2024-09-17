@@ -15,16 +15,70 @@ namespace Trackit.ViewModels
     {
         private TrackerSettings _settings;
         private bool _isBusy;
+        private bool _straight;
+        private bool _splines;
+        private bool _stepped;
+
         public string MinThreshold { get; set; }
         public string MaxThreshold { get; set; }
-        public bool Straight { get; set; }
-        public bool Splines { get; set; }
-        public bool Stepped { get; set; }
         public bool Scatter { get; set; }
-        public bool MarkArea { get; set; }
         public bool ShowMinThreshold { get; set; }
         public bool ShowMaxThreshold { get; set; }
+        public bool ShowTrendLine { get; set; }
 
+        public bool Straight
+        {
+            get => _straight;
+            set
+            {
+                if (_straight == value) return;
+                _straight = value;
+                if (_straight)
+                {
+                    _splines = false;
+                    _stepped = false;
+                    OnPropertyChanged(nameof(Splines));
+                    OnPropertyChanged(nameof(Stepped));
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Splines
+        {
+            get => _splines;
+            set
+            {
+                if (_splines == value) return;
+                _splines = value;
+                if (_splines)
+                {
+                    _straight = false;
+                    _stepped = false;
+                    OnPropertyChanged(nameof(Straight));
+                    OnPropertyChanged(nameof(Stepped));
+                }
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Stepped
+        {
+            get => _stepped;
+            set
+            {
+                if (_stepped == value) return;
+                _stepped = value;
+                if (_stepped)
+                {
+                    _straight = false;
+                    _splines = false;
+                    OnPropertyChanged(nameof(Straight));
+                    OnPropertyChanged(nameof(Splines));
+                }
+                OnPropertyChanged();
+            }
+        }
         public bool IsBusy
         {
             get => _isBusy;
@@ -44,9 +98,9 @@ namespace Trackit.ViewModels
             Splines = settings.splines;
             Stepped = settings.stepped;
             Scatter = settings.scatter;
-            MarkArea = settings.markArea;
             ShowMinThreshold = settings.showMinThreshold;
             ShowMaxThreshold = settings.showMaxThreshold;
+            ShowTrendLine = settings.showTrendLine;
             SaveCommand = new Command(async () => await SaveSettingsAsync());
         }
 
@@ -64,9 +118,9 @@ namespace Trackit.ViewModels
                 _settings.splines = Splines;
                 _settings.stepped = Stepped;
                 _settings.scatter = Scatter;
-                _settings.markArea = MarkArea;
                 _settings.showMinThreshold = ShowMinThreshold;
                 _settings.showMaxThreshold = ShowMaxThreshold;
+                _settings.showTrendLine = ShowTrendLine;
 
                 IsBusy = true;
                 await App.Database.UpdateSettingsAsync(_settings);
