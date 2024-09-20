@@ -18,13 +18,13 @@ namespace Trackit.ViewModels
         private bool _straight;
         private bool _splines;
         private bool _stepped;
+        private bool _scatter;
+        private bool _showMinThreshold;
+        private bool _showMaxThreshold;
+        private bool _showTrendLine;
 
         public string MinThreshold { get; set; }
         public string MaxThreshold { get; set; }
-        public bool Scatter { get; set; }
-        public bool ShowMinThreshold { get; set; }
-        public bool ShowMaxThreshold { get; set; }
-        public bool ShowTrendLine { get; set; }
 
         public bool Straight
         {
@@ -41,6 +41,7 @@ namespace Trackit.ViewModels
                     OnPropertyChanged(nameof(Stepped));
                 }
                 OnPropertyChanged();
+
             }
         }
 
@@ -59,6 +60,7 @@ namespace Trackit.ViewModels
                     OnPropertyChanged(nameof(Stepped));
                 }
                 OnPropertyChanged();
+
             }
         }
 
@@ -77,6 +79,51 @@ namespace Trackit.ViewModels
                     OnPropertyChanged(nameof(Splines));
                 }
                 OnPropertyChanged();
+
+            }
+        }
+
+        public bool Scatter
+        {
+            get => _scatter;
+            set
+            {
+                _scatter = value;
+                OnPropertyChanged();
+
+            }
+        }
+
+        public bool ShowMinThreshold
+        {
+            get => _showMinThreshold;
+            set
+            {
+                _showMinThreshold = value;
+                OnPropertyChanged();
+
+            }
+        }
+
+        public bool ShowMaxThreshold
+        {
+            get => _showMaxThreshold;
+            set
+            {
+                _showMaxThreshold = value;
+                OnPropertyChanged();
+
+            }
+        }
+
+        public bool ShowTrendLine
+        {
+            get => _showTrendLine;
+            set
+            {
+                _showTrendLine = value;
+                OnPropertyChanged();
+
             }
         }
         public bool IsBusy
@@ -89,8 +136,15 @@ namespace Trackit.ViewModels
             }
         }
 
+
+
         public SettingsTrackerViewModel(TrackerSettings settings)
         {
+            if (settings == null)
+            {
+                throw new ArgumentNullException(nameof(settings), "TrackerSettings cannot be null");
+            }
+
             _settings = settings;
             MinThreshold = settings.min_threshhold.ToString();
             MaxThreshold = settings.max_threshold.ToString();

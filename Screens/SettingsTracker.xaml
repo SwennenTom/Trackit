@@ -35,6 +35,12 @@
                VerticalOptions="Center"
                HorizontalOptions="FillAndExpand" />
 
+            <!-- Save Button -->
+            <Button Text="Save"
+                    Command="{Binding SaveCommand}"
+                    VerticalOptions="End"
+                    HorizontalOptions="FillAndExpand" />
+
             <!-- Straight Line -->
             <Grid>
                 <Label Text="Straight Line:"
@@ -110,13 +116,6 @@
                         VerticalOptions="Center"
                         HorizontalOptions="End"/>
             </Grid>
-
-            <!-- Save Button -->
-            <Button Text="Save"
-        Command="{Binding SaveCommand}"
-        VerticalOptions="End"
-        HorizontalOptions="FillAndExpand" />
-
         </StackLayout>
     </ScrollView>
 </ContentPage>
