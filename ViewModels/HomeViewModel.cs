@@ -100,7 +100,10 @@ namespace Trackit.ViewModels
 
         private async void OnShowHomeInfo()
         {
-            await App.Current.MainPage.DisplayAlert("Info","Tap + to create a new tracker. Tap on an existing tracker to view the graph. Double tap on an existing tracker to delete it.", "Ok");
+            await App.Current.MainPage.DisplayAlert("Info",$@"
+Tap ➕ to create a new tracker. 
+Tap on an existing tracker to view the graph. 
+Double tap on an existing tracker to delete it.", "Ok");
         }
 
 

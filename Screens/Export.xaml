@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Trackit.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Trackit.Screens.Export"
+             Title="Export">
+    <ContentPage.Content>
+
+        <ScrollView>
+            <VerticalStackLayout Padding="20" Spacing="15">
+
+                <Frame BackgroundColor="White">
+                    <VerticalStackLayout>
+                        <Label Text="Recipient Email:" FontSize="Medium" />
+                        <Entry x:Name="EmailEntry" Placeholder="Enter recipient's email" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame BackgroundColor="White">
+                    <VerticalStackLayout>
+                        <Label Text="Include data from range:" FontSize="Medium" />
+
+                        <HorizontalStackLayout Spacing="10">
+                            <Label Text="from" VerticalOptions="Center"/>
+                            <DatePicker x:Name="FromDatePicker" />
+                            <Label Text="to" VerticalOptions="Center"/>
+                            <DatePicker x:Name="ToDatePicker" />
+                        </HorizontalStackLayout>
+
+                        <Grid ColumnSpacing="10" RowSpacing="10" HorizontalOptions="Center" Margin="0,10,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button Text="Last Week" Grid.Row="0" Grid.Column="0" Command="{Binding LastWeekCommand}" Style="{StaticResource ButtonStyle}"/>
+                            <Button Text="Last Month" Grid.Row="0" Grid.Column="1" Command="{Binding LastMonthCommand}" Style="{StaticResource ButtonStyle}"/>
+                            <Button Text="Last Year" Grid.Row="1" Grid.Column="0" Command="{Binding LastYearCommand}" Style="{StaticResource ButtonStyle}"/>
+                            <Button Text="All Time" Grid.Row="1" Grid.Column="1" Command="{Binding AllTimeCommand}" Style="{StaticResource ButtonStyle}"/>
+                        </Grid>
+
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame BackgroundColor="White">
+                    <VerticalStackLayout>
+                        <Label Text="Message to recipient:" FontSize="Medium" />
+                        <Editor x:Name="MessageEditor" Placeholder="Enter your message" HeightRequest="100"/>
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame BackgroundColor="White">
+                    <VerticalStackLayout>
+                        <Button Text="Export" x:Name="ExportButton" 
+            Command="{Binding ExportCommand}"
+            BackgroundColor="LightBlue"
+            TextColor="Black"
+            HorizontalOptions="Center" />
+
+
+                        <Label Text="This will generate a report in Excel and open your preferred email client. You can edit your message before sending."
+           FontSize="Small"
+           TextColor="Gray"
+           HorizontalOptions="Center"
+           VerticalOptions="Center"
+                   Margin="0,10,0,0"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+    </ContentPage.Content>
+
+</ContentPage>

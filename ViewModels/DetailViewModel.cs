@@ -18,6 +18,8 @@ namespace Trackit.ViewModels
 
         private readonly INavigation _navigation;
         private readonly Page _page;
+        private int _trackerId;
+        private Tracker _tracker;
         private bool _isFromDateInitialized = false;
 
         private DateTime _fromDate;
@@ -50,8 +52,6 @@ namespace Trackit.ViewModels
             }
         }
 
-        private int _trackerId;
-        private Tracker _tracker;
         public string? Name => _tracker?.name;
 
         private PlotModel _plotModel;
@@ -108,6 +108,8 @@ namespace Trackit.ViewModels
         public ICommand LastMonthCommand { get; }
         public ICommand LastYearCommand { get; }
         public ICommand AllTimeCommand { get; }
+        public ICommand ShowDetailInfoCommand { get; }
+        public ICommand NavigateToExportCommand { get; }
 
         #endregion
 
@@ -130,6 +132,11 @@ namespace Trackit.ViewModels
                 await App.Current.MainPage.DisplayAlert("Error", "Settings not found.", "OK");
             }
         }
+
+        private async Task NavigateToExportAsync()
+        {
+            await _navigation.PushAsync(new Export(_tracker));
+        }
         #endregion
 
         #region Constructor
@@ -151,9 +158,26 @@ namespace Trackit.ViewModels
             LastMonthCommand = new Command(SetLastMonth);
             LastYearCommand = new Command(SetLastYear);
             AllTimeCommand = new Command(async () => await SetAllTimeAsync());
+            ShowDetailInfoCommand = new Command(OnShowDetailInfo);
+            NavigateToExportCommand = new Command(async () => await NavigateToExportAsync());
 
             LoadChartDataAsync();
             
+        }
+
+        #endregion
+
+        #region ShowInfo
+
+        private async void OnShowDetailInfo()
+        {
+            await App.Current.MainPage.DisplayAlert("Info", $@"
+Tap ➕ to add a new value. 
+Tap 🔍 to navigate to the list of values. 
+Tap 🗑️ to delete the tracker. 
+Tap ⚙️ to navigate to the settings. 
+Tap ✉️ to navigate to the export page.", 
+"Ok");
         }
 
         #endregion

@@ -38,6 +38,7 @@
             <!-- Save Button -->
             <Button Text="Save"
                     Command="{Binding SaveCommand}"
+                    Style="{StaticResource ButtonStyle}"
                     VerticalOptions="End"
                     HorizontalOptions="FillAndExpand" />
 
@@ -76,7 +77,7 @@
 
             <!-- Scatter Plot -->
             <Grid>
-                <Label Text="Scatter Plot:"
+                <Label Text="Mark data points:"
                FontSize="Medium"
                VerticalOptions="Center"
                HorizontalOptions="Start" />

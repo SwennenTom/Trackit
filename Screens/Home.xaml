@@ -17,32 +17,29 @@
                                VerticalOptions="Center" />
 
                 <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="Start"
-                     VerticalOptions="Start"
-                     Spacing="10">
-                    <Label Text="Trackers"
-                   FontSize="Large"
-                   HorizontalOptions="Start"
-                   VerticalOptions="Center" />
-                    <Frame Padding="2" Margin="2" BorderColor="LightSteelBlue" BackgroundColor="LightSteelBlue" CornerRadius="10" HasShadow="True">
-                    <Button Text="➕" 
-                    Command="{Binding AddTrackerCommand}" 
-                    HorizontalOptions="Center"
-                    BackgroundColor="LightBlue"
-                    TextColor="Black" />
+                                HorizontalOptions="Start"
+                                VerticalOptions="Start"
+                                Spacing="10">
+                    <Label  Text="Trackers"
+                            FontSize="Large"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center" />
+                    <Frame Style="{StaticResource FrameStyle}">
+                        <Button Text="➕" 
+                                Command="{Binding AddTrackerCommand}" 
+                                Style="{StaticResource ButtonStyle}" />
                     </Frame>
-                    <Frame Padding="2" Margin="2" BorderColor="LightSteelBlue" BackgroundColor="LightSteelBlue" CornerRadius="10" HasShadow="True">
+                    <Frame Style="{StaticResource FrameStyle}">
                         <Button Text="ℹ️" 
-                    Command="{Binding ShowHomeInfoCommand}" 
-                    HorizontalOptions="Center"
-                    BackgroundColor="LightBlue"
-                    TextColor="Black" />
+                                Command="{Binding ShowHomeInfoCommand}" 
+                                HorizontalOptions="Center"
+                                Style="{StaticResource ButtonStyle}"/>
                     </Frame>
                 </StackLayout>
 
                 <CollectionView x:Name="TrackersList"
-                        ItemsSource="{Binding Trackers}"
-                        SelectionMode="Single">
+                                    ItemsSource="{Binding Trackers}"
+                                SelectionMode="Single">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Frame Padding="0" Margin="0" BorderColor="LightSteelBlue" CornerRadius="10" BackgroundColor="LightBlue" HasShadow="True">

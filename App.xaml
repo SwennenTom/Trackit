@@ -5,10 +5,27 @@
              x:Class="Trackit.App">
     <Application.Resources>
         <ResourceDictionary>
+            
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="FrameStyle" TargetType="Frame">
+                <Setter Property="Padding" Value="2" />
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="BorderColor" Value="LightSteelBlue" />
+                <Setter Property="BackgroundColor" Value="LightSteelBlue" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="HasShadow" Value="True" />
+            </Style>
+
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="LightBlue" />
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+            </Style>
+
         </ResourceDictionary>
     </Application.Resources>
 </Application>
