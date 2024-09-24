@@ -22,20 +22,65 @@
                                Color="Blue"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
+                <Frame BackgroundColor="White">
+                    <StackLayout>
+                        <Label Text="Description:" FontSize="Small" TextColor="Grey"/>
+                        <Label Text="{Binding Description}" Margin="0,0,0,20" FontSize="Medium"/>
 
-                <Label Text="{Binding Description}"/>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
+                            <Button Text="➕" Command="{Binding AddValueCommand}" Margin="0,0,5,0"/>
+                            <Button Text="🔍" Command="{Binding NavigateToValuesCommand}" Margin="0,0,5,0"/>
+                            <Button Text="🗑️" Command="{Binding DeleteTrackerCommand}" Margin="0,0,5,0"/>
+                            <Button Text="Settings" Command="{Binding NavigateToSettingsCommand}"/>
+                        </StackLayout>
+                    </StackLayout>
+                </Frame>
 
-                <StackLayout Orientation="Horizontal" HorizontalOptions="Start">
-                    <Button Text="➕" Command="{Binding AddValueCommand}" Margin="0,0,5,0"/>
-                    <Button Text="🔍" Command="{Binding NavigateToValuesCommand}" Margin="0,0,5,0"/>
-                    <Button Text="🗑️" Command="{Binding DeleteTrackerCommand}" Margin="0,0,5,0"/>
-                    <Button Text="Settings" Command="{Binding NavigateToSettingsCommand}"/>
-                </StackLayout>
+                <Frame BackgroundColor="White">
+                    <Grid>
+                        <oxy:PlotView x:Name="plotView" Model="{Binding PlotModel}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HeightRequest="400"/>
+                    </Grid>
+                </Frame>
 
+                <Frame BackgroundColor="White">
+                    <StackLayout>
+                        <Label Text="Show data:" FontSize="Medium" HorizontalOptions="Center" Margin="0,0,0,10"/>
 
-                <Grid>
-                    <oxy:PlotView x:Name="plotView" Model="{Binding PlotModel}" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HeightRequest="400"/>
-                </Grid>
+                        <Grid ColumnSpacing="10" RowSpacing="10" HorizontalOptions="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Text="From:" Grid.Row="0" Grid.Column="0" VerticalOptions="Center"/>
+                            <DatePicker Date="{Binding FromDate}" Grid.Row="1" Grid.Column="0" VerticalOptions="Center"/>
+
+                            <Label Text="To:" Grid.Row="0" Grid.Column="1" VerticalOptions="Center"/>
+                            <DatePicker Date="{Binding ToDate}" Grid.Row="1" Grid.Column="1" VerticalOptions="Center"/>
+                        </Grid>
+                    </StackLayout>
+                </Frame>
+                <Frame BackgroundColor="White">
+                    <Grid ColumnSpacing="10" RowSpacing="10" HorizontalOptions="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Text="Last Week" Grid.Row="0" Grid.Column="0" Command="{Binding LastWeekCommand}"/>
+                        <Button Text="Last Month" Grid.Row="0" Grid.Column="1" Command="{Binding LastMonthCommand}"/>
+                        <Button Text="Last Year" Grid.Row="1" Grid.Column="0" Command="{Binding LastYearCommand}"/>
+                        <Button Text="All Time" Grid.Row="1" Grid.Column="1" Command="{Binding AllTimeCommand}"/>
+                    </Grid>
+                </Frame>
 
                 <Label Text="{Binding NoDataMessage}"
                    IsVisible="{Binding Chart, Converter={StaticResource NullToBooleanConverter}}"
