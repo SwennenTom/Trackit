@@ -6,6 +6,8 @@ using Microsoft.Maui.Controls.Hosting;
 using OxyPlot.Maui.Skia;
 using SkiaSharp.Views.Maui.Handlers;
 using SkiaSharp.Views.Maui.Controls;
+using Trackit.Screens;
+using Trackit.ViewModels;
 
 namespace Trackit
 {
@@ -22,6 +24,9 @@ namespace Trackit
                 {
                     handlers.AddHandler(typeof(SKCanvasView), typeof(SKCanvasViewHandler));
                 });
+
+            builder.Services.AddTransient<Export>();
+            builder.Services.AddTransient<ExportViewModel>();
 
             //Task.Run(async () => await App.Database.AddTestDataAsync()).Wait();
 

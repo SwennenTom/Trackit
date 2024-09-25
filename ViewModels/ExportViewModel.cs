@@ -10,6 +10,7 @@ using Syncfusion.XlsIO;
 using Trackit.Models;
 using OxyPlot.SkiaSharp;
 using OxyPlot;
+using Syncfusion.XlsIO.Parser.Biff_Records;
 
 
 namespace Trackit.ViewModels
@@ -18,14 +19,14 @@ namespace Trackit.ViewModels
     {
         #region Init
         private int _trackerId;
-        private string _email;
-        
-        public string Email
+        private string _emailrecipient;
+
+        public string EmailRecipient
         {
-            get => _email;
+            get => _emailrecipient;
             set
             {
-                _email = value;
+                _emailrecipient = value;
                 OnPropertyChanged();
             }
         }
@@ -63,6 +64,7 @@ namespace Trackit.ViewModels
             }
         }
         #endregion
+
         #region Commands
         public ICommand ExportCommand { get; }
         public ICommand LastWeekCommand { get; }
@@ -72,6 +74,7 @@ namespace Trackit.ViewModels
 
         #endregion
 
+        #region constructor
         public ExportViewModel(int trackerId)
         {
             _trackerId = trackerId;
@@ -83,6 +86,8 @@ namespace Trackit.ViewModels
             ExportCommand = new Command(OnExport);
 
         }
+
+        #endregion
 
         #region Set Dates
         private void SetLastWeek()
@@ -120,6 +125,7 @@ namespace Trackit.ViewModels
 
         #endregion
 
+        #region Create excel file
         private async Task<MemoryStream> CreateExcelPage(Tracker tracker, List<TrackerValues> valuesInRange)
         {
             using (ExcelEngine excelEngine = new ExcelEngine())
@@ -165,14 +171,13 @@ namespace Trackit.ViewModels
 
                 IChartShape chart = worksheet1.Charts.Add(); // Adjust the position and size as needed
                 chart.ChartType = ExcelChartType.Line_Markers; // Set type of chart
-                chart.DataRange = worksheet2.Range["A1:B"]; // Set chart data
+                chart.DataRange = worksheet2.Range["A2:B"]; // Set chart data
 
                 // Set chart title and axes titles
                 //chart.ChartTitle = "";
                 chart.PrimaryValueAxis.Title = "Values";
                 chart.PrimaryCategoryAxis.Title = "Date";
 
-                //Set Datalabels
                 //Set Datalabels
                 IChartSerie serie1 = chart.Series[0];
                 serie1.DataPoints.DefaultDataPoint.DataLabels.IsValue = true;
@@ -184,36 +189,52 @@ namespace Trackit.ViewModels
 
                 MemoryStream excelStream = new MemoryStream();
                 workbook.SaveAs(excelStream);
-                excelStream.Position = 0;  // Reset position to the beginning of the stream
+                excelStream.Position = 0;
 
                 return excelStream;
             }
         }
 
+        #endregion
+
+        #region Send Email 
         private async Task SendEmailWithAttachment(Tracker tracker, List<TrackerValues> valuesInRange)
         {
-            MemoryStream excelStream = await CreateExcelPage(tracker, valuesInRange);
-            byte[] excelFileBytes = excelStream.ToArray();
-            string excelFileName = tracker.name + ".xlsx";
-
-            string tempFilePath = Path.Combine(Path.GetTempPath(), excelFileName);
-            File.WriteAllBytes(tempFilePath, excelFileBytes);
-
-            var message = new EmailMessage
+            if (Email.Default.IsComposeSupported)
             {
-                Subject = tracker.name + ": " + tracker.description,
-                Body = _message,
-                BodyFormat = EmailBodyFormat.PlainText,
-                To = new List<string> {Email}
-            };
+                MemoryStream excelStream = await CreateExcelPage(tracker, valuesInRange);
+                byte[] excelFileBytes = excelStream.ToArray();
+                string excelFileName = tracker.name + ".xlsx";
 
-            message.Attachments.Add(new EmailAttachment(tempFilePath));
+                string tempFilePath = Path.Combine(Path.GetTempPath(), excelFileName);
+                File.WriteAllBytes(tempFilePath, excelFileBytes);
 
-            await Email.ComposeAsync(message);
+                var message = new EmailMessage
+                {
+                    Subject = tracker.name + ": " + tracker.description,
+                    Body = _message,
+                    BodyFormat = EmailBodyFormat.PlainText,
+                    To = new List<string> { EmailRecipient }
+                };
 
-            File.Delete(tempFilePath);
+                message.Attachments.Add(new EmailAttachment(tempFilePath));
+
+                await Email.ComposeAsync(message);
+
+                File.Delete(tempFilePath);
         }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert(
+        "Email Not Supported",
+        "Something went wrong when we tried creating the email.",
+        "OK");
+    }
+}
 
+        #endregion
+
+        #region Export logic
         private async void OnExport()
         {
             Tracker tracker = await App.Database.GetTrackerAsync(_trackerId);
@@ -224,6 +245,8 @@ namespace Trackit.ViewModels
 
             await SendEmailWithAttachment(tracker, valuesInRange);
         }
+
+        #endregion
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
