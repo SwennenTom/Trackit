@@ -4,6 +4,8 @@ using System.Reflection;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Microsoft.Maui;
+using Microsoft.Maui.ApplicationModel.Communication;
 using Syncfusion.XlsIO;
 using Trackit.Models;
 using OxyPlot.SkiaSharp;
@@ -17,6 +19,7 @@ namespace Trackit.ViewModels
         #region Init
         private int _trackerId;
         private string _email;
+        
         public string Email
         {
             get => _email;
@@ -117,7 +120,7 @@ namespace Trackit.ViewModels
 
         #endregion
 
-        private async Task<MemoryStream> CreateExcelPage(Tracker tracker, List<TrackerValues> valuesInRange, PlotModel plotModel)
+        private async Task<MemoryStream> CreateExcelPage(Tracker tracker, List<TrackerValues> valuesInRange)
         {
             using (ExcelEngine excelEngine = new ExcelEngine())
             {
@@ -160,15 +163,20 @@ namespace Trackit.ViewModels
                 worksheet2.AutofitColumn(1);
                 worksheet2.AutofitColumn(2);
 
-                IChart chart = worksheet1.Charts.Add(ExcelChartType.Line, 3, 1, 10, 5); // Adjust the position and size as needed
-
-                // Set chart data
-                chart.Series.Add(worksheet2.Range["A1:B" + (rowIndex - 1)], ExcelChartSeriesType.Line);
+                IChartShape chart = worksheet1.Charts.Add(); // Adjust the position and size as needed
+                chart.ChartType = ExcelChartType.Line_Markers; // Set type of chart
+                chart.DataRange = worksheet2.Range["A1:B"]; // Set chart data
 
                 // Set chart title and axes titles
-                chart.Title.Text = "Glucose Levels Over Time";
-                chart.PrimaryValueAxis.Title.Text = "Glucose Level";
-                chart.PrimaryCategoryAxis.Title.Text = "Date";
+                //chart.ChartTitle = "";
+                chart.PrimaryValueAxis.Title = "Values";
+                chart.PrimaryCategoryAxis.Title = "Date";
+
+                //Set Datalabels
+                //Set Datalabels
+                IChartSerie serie1 = chart.Series[0];
+                serie1.DataPoints.DefaultDataPoint.DataLabels.IsValue = true;
+                serie1.DataPoints.DefaultDataPoint.DataLabels.Position = ExcelDataLabelPosition.Left;
 
                 // Set the chart legend
                 chart.HasLegend = true;
@@ -182,18 +190,28 @@ namespace Trackit.ViewModels
             }
         }
 
-        private async Task SendEmailWithAttachment(Tracker tracker, List<TrackerValues> valuesInRange, PlotModel plotModel)
+        private async Task SendEmailWithAttachment(Tracker tracker, List<TrackerValues> valuesInRange)
         {
-            MemoryStream excelStream = await CreateExcelPage(tracker, valuesInRange, plotModel);
+            MemoryStream excelStream = await CreateExcelPage(tracker, valuesInRange);
             byte[] excelFileBytes = excelStream.ToArray();
             string excelFileName = tracker.name + ".xlsx";
 
-            await Email.ComposeAsync(
-        subject: "Tracker Data for " + tracker.name,
-        body: "Please find attached the tracker data and graph.",
-        to: new string[] { Email },
-        attachments: new List<EmailAttachment> { new EmailAttachment(excelFileName, excelFileBytes) }
-    );
+            string tempFilePath = Path.Combine(Path.GetTempPath(), excelFileName);
+            File.WriteAllBytes(tempFilePath, excelFileBytes);
+
+            var message = new EmailMessage
+            {
+                Subject = tracker.name + ": " + tracker.description,
+                Body = _message,
+                BodyFormat = EmailBodyFormat.PlainText,
+                To = new List<string> {Email}
+            };
+
+            message.Attachments.Add(new EmailAttachment(tempFilePath));
+
+            await Email.ComposeAsync(message);
+
+            File.Delete(tempFilePath);
         }
 
         private async void OnExport()
@@ -203,12 +221,8 @@ namespace Trackit.ViewModels
             List<TrackerValues> valuesInRange = valuesTotal
                                                     .Where(v => v.date >= FromDate && v.date <= ToDate)
                                                     .ToList();
-            PlotModel plotModel = CreatePlotModel(valuesInRange);
 
-            await SendEmailWithAttachment(tracker, valuesInRange, plotModel);
-            // Logic for generating the Excel report and opening email client
-            // For now, display a simple message as a placeholder
-            await App.Current.MainPage.DisplayAlert("Export", "The report will be generated and sent via email.", "OK");
+            await SendEmailWithAttachment(tracker, valuesInRange);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

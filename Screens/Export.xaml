@@ -13,7 +13,7 @@
                 <Frame BackgroundColor="White">
                     <VerticalStackLayout>
                         <Label Text="Recipient Email:" FontSize="Medium" />
-                        <Entry x:Name="EmailEntry" Placeholder="Enter recipient's email" />
+                        <Entry x:Name="EmailEntry" Text="{Binding EmailRecipient}" Placeholder="Enter recipient's email" />
                     </VerticalStackLayout>
                 </Frame>
 
