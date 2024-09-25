@@ -1,13 +1,18 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Windows.Input;
-using Trackit.Models;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Syncfusion.XlsIO;
+using Trackit.Models;
+
 
 namespace Trackit.ViewModels
 {
     public class ExportViewModel : INotifyPropertyChanged
     {
+        #region Init
         private int _trackerId;
         private string _email;
         public string Email
@@ -52,14 +57,63 @@ namespace Trackit.ViewModels
                 OnPropertyChanged();
             }
         }
-
+        #endregion
+        #region Commands
         public ICommand ExportCommand { get; }
+        public ICommand LastWeekCommand { get; }
+        public ICommand LastMonthCommand { get; }
+        public ICommand LastYearCommand { get; }
+        public ICommand AllTimeCommand { get; }
+
+        #endregion
 
         public ExportViewModel(int trackerId)
         {
-            ExportCommand = new Command(OnExport);
             _trackerId = trackerId;
+
+            LastWeekCommand = new Command(SetLastWeek);
+            LastMonthCommand = new Command(SetLastMonth);
+            LastYearCommand = new Command(SetLastYear);
+            AllTimeCommand = new Command(async () => await SetAllTimeAsync());
+            ExportCommand = new Command(OnExport);
+            
         }
+
+        #region Set Dates
+        private void SetLastWeek()
+        {
+            FromDate = DateTime.Now.AddDays(-7);
+            ToDate = DateTime.Now;
+        }
+
+        private void SetLastMonth()
+        {
+            FromDate = DateTime.Now.AddMonths(-1);
+            ToDate = DateTime.Now;
+        }
+
+        private void SetLastYear()
+        {
+            FromDate = DateTime.Now.AddYears(-1);
+            ToDate = DateTime.Now;
+        }
+
+        private async Task SetAllTimeAsync()
+        {
+            var earliestDate = await GetEarliestDateFromDatabaseAsync();
+            FromDate = earliestDate ?? DateTime.Now;
+            ToDate = DateTime.Now;
+            ToDate = DateTime.Now;
+        }
+
+        private async Task<DateTime?> GetEarliestDateFromDatabaseAsync()
+        {
+
+            var allValues = await App.Database.GetValuesForTrackerAsync(_trackerId);
+            return allValues.Min(v => v.date);
+        }
+
+        #endregion
 
         private async void OnExport()
         {

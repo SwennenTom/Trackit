@@ -11,7 +11,7 @@ namespace Trackit
         public App()
         {
             InitializeComponent();
-
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWXZcdXRRQmBfVU11WEM=");
             MainPage = new NavigationPage(new Home());
         }
 

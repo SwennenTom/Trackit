@@ -23,9 +23,9 @@
 
                         <HorizontalStackLayout Spacing="10">
                             <Label Text="from" VerticalOptions="Center"/>
-                            <DatePicker x:Name="FromDatePicker" />
+                            <DatePicker x:Name="FromDatePicker" Date="{Binding FromDate}" />
                             <Label Text="to" VerticalOptions="Center"/>
-                            <DatePicker x:Name="ToDatePicker" />
+                            <DatePicker x:Name="ToDatePicker" Date="{Binding ToDate}" />
                         </HorizontalStackLayout>
 
                         <Grid ColumnSpacing="10" RowSpacing="10" HorizontalOptions="Center" Margin="0,10,0,0">
