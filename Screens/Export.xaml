@@ -50,7 +50,7 @@
                 <Frame BackgroundColor="White">
                     <VerticalStackLayout>
                         <Label Text="Message to recipient:" FontSize="Medium" />
-                        <Editor x:Name="MessageEditor" Placeholder="Enter your message" HeightRequest="100"/>
+                        <Editor x:Name="MessageEditor" Placeholder="Enter your message" Text="{Binding Message}" HeightRequest="100"/>
                     </VerticalStackLayout>
                 </Frame>
                 <Frame BackgroundColor="White">

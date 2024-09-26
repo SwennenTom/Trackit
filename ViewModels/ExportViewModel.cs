@@ -125,7 +125,50 @@ namespace Trackit.ViewModels
 
         #endregion
 
-        #region Create excel file
+        #region Create excel file and path
+
+        #region Create filepath for excelfile
+        private string GetFilePath(Tracker tracker)
+        {
+            string fileName = tracker.name + ".xlsx";
+            string folderName = "Trackit";
+            string libraryPath = string.Empty;
+
+            // Get platform-specific storage path using DeviceInfo.Platform in MAUI
+            if (DeviceInfo.Platform == DevicePlatform.Android)
+            {
+                // On Android, create a Trackit folder inside the Personal folder
+                libraryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), folderName);
+                if (!Directory.Exists(libraryPath))
+                {
+                    Directory.CreateDirectory(libraryPath); // Create the Trackit folder if it doesn't exist
+                }
+            }
+            else if (DeviceInfo.Platform == DevicePlatform.iOS)
+            {
+                // For iOS, create a Trackit folder inside MyDocuments folder
+                libraryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), folderName);
+                if (!Directory.Exists(libraryPath))
+                {
+                    Directory.CreateDirectory(libraryPath); // Create the Trackit folder if it doesn't exist
+                }
+            }
+            else if (DeviceInfo.Platform == DevicePlatform.WinUI)
+            {
+                // For Windows/WinUI, create a Trackit folder inside LocalApplicationData
+                libraryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), folderName);
+                if (!Directory.Exists(libraryPath))
+                {
+                    Directory.CreateDirectory(libraryPath); // Create the Trackit folder if it doesn't exist
+                }
+            }
+
+            // Combine the folder path with the file name
+            return Path.Combine(libraryPath, fileName);
+        }
+        #endregion
+
+        #region Create Excelfile
         private async Task<MemoryStream> CreateExcelPage(Tracker tracker, List<TrackerValues> valuesInRange)
         {
             using (ExcelEngine excelEngine = new ExcelEngine())
@@ -160,23 +203,27 @@ namespace Trackit.ViewModels
                 int rowIndex = 2;
                 foreach (var value in valuesInRange)
                 {
-                    worksheet2.Range["A" + rowIndex].Text = value.date.ToString("yyyy-MM-dd"); // Add Date
+                    worksheet2.Range["A" + rowIndex].DateTime = value.date; // Set DateTime
                     worksheet2.Range["B" + rowIndex].Number = value.value; // Add Tracker Value
                     rowIndex++;
                 }
+
 
                 // Auto-fit columns
                 worksheet2.AutofitColumn(1);
                 worksheet2.AutofitColumn(2);
 
                 IChartShape chart = worksheet1.Charts.Add(); // Adjust the position and size as needed
-                chart.ChartType = ExcelChartType.Line_Markers; // Set type of chart
-                chart.DataRange = worksheet2.Range["A2:B"]; // Set chart data
+                chart.ChartType = ExcelChartType.Line; // Set type of chart
+                int lastRow = rowIndex -1;
+                chart.DataRange = worksheet2.Range["A2:B" + lastRow]; // Set chart data
 
                 // Set chart title and axes titles
-                //chart.ChartTitle = "";
                 chart.PrimaryValueAxis.Title = "Values";
                 chart.PrimaryCategoryAxis.Title = "Date";
+                chart.PrimaryCategoryAxis.NumberFormat = "yyyy-MM-dd"; // Format the axis as dates
+                chart.PrimaryCategoryAxis.CategoryLabels = worksheet2.Range["A2:A" + lastRow]; // Explicitly set category labels
+
 
                 //Set Datalabels
                 IChartSerie serie1 = chart.Series[0];
@@ -194,6 +241,7 @@ namespace Trackit.ViewModels
                 return excelStream;
             }
         }
+        #endregion
 
         #endregion
 
@@ -206,18 +254,18 @@ namespace Trackit.ViewModels
                 byte[] excelFileBytes = excelStream.ToArray();
                 string excelFileName = tracker.name + ".xlsx";
 
-                string tempFilePath = Path.Combine(Path.GetTempPath(), excelFileName);
+                string tempFilePath = Path.Combine(FileSystem.CacheDirectory, excelFileName);
+                tempFilePath = GetFilePath(tracker);
                 File.WriteAllBytes(tempFilePath, excelFileBytes);
 
                 var message = new EmailMessage
                 {
                     Subject = tracker.name + ": " + tracker.description,
-                    Body = _message,
-                    BodyFormat = EmailBodyFormat.PlainText,
+                    Body = Message,
                     To = new List<string> { EmailRecipient }
                 };
 
-                message.Attachments.Add(new EmailAttachment(tempFilePath));
+                message.Attachments.Add(new EmailAttachment(tempFilePath, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
 
                 await Email.ComposeAsync(message);
 
