@@ -9,6 +9,8 @@ using OxyPlot.Axes;
 using Trackit.Models;
 using Trackit.Screens;
 using OxyPlot.Annotations;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Trackit.ViewModels
 {
@@ -31,7 +33,7 @@ namespace Trackit.ViewModels
                 if (_fromDate != value)
                 {
                     _fromDate = value;
-                    OnPropertyChanged(nameof(FromDate));
+                    OnPropertyChanged();
                     LoadChartDataAsync();
                 }
             }
@@ -46,7 +48,7 @@ namespace Trackit.ViewModels
                 if (_toDate != value)
                 {
                     _toDate = value;
-                    OnPropertyChanged(nameof(ToDate));
+                    OnPropertyChanged();
                     LoadChartDataAsync();
                 }
             }
@@ -61,7 +63,7 @@ namespace Trackit.ViewModels
             set
             {
                 _plotModel = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(PlotModel));
             }
         }
 
@@ -94,7 +96,7 @@ namespace Trackit.ViewModels
             set
             {
                 _isBusy = value;
-                OnPropertyChanged(nameof(IsBusy));
+                OnPropertyChanged();
             }
         }
         #endregion
@@ -224,6 +226,7 @@ Tap ✉️ to navigate to the export page.",
                 IsBusy = true;
                 await App.Database.AddValueAsync(trackerValue);
                 await LoadChartDataAsync();
+                PlotModel.InvalidatePlot(true);
                 IsBusy = false;
             }
         }
@@ -272,7 +275,8 @@ Tap ✉️ to navigate to the export page.",
 
         private async Task<(IEnumerable<TrackerValues> readings, TrackerSettings trackerSettings)> FetchDataAsync(int trackerId)
         {
-            var readings = await App.Database.GetValuesForTrackerAsync(trackerId);
+            var readings = new List<TrackerValues>();
+            readings = await App.Database.GetValuesForTrackerAsync(trackerId);
             var trackerSettings = await App.Database.GetSettingsAsync(trackerId);
             return (readings, trackerSettings);
         }
@@ -436,6 +440,8 @@ Tap ✉️ to navigate to the export page.",
 
                 var filteredReadings = FilterReadingsByDate(readings);
 
+                ToDate = DateTime.Now;
+
                 if (readings == null || trackerSettings == null)
                 {
                     NoDataMessage = "Data retrieval error.";
@@ -461,12 +467,19 @@ Tap ✉️ to navigate to the export page.",
                     _isFromDateInitialized = true;
                 }
 
+
                 var plotModel = CreatePlotModel(trackerSettings);
+
+                plotModel.Series.Clear();
+                plotModel.Annotations.Clear();
+
                 AddSeries(plotModel, filteredReadings, trackerSettings);
                 AddEMASeries(plotModel, filteredReadings, trackerSettings);
 
-                PlotModel = plotModel;
-                PlotModel.InvalidatePlot(true); // Force a redraw
+                    PlotModel = null;
+                    PlotModel = plotModel;
+                    PlotModel.InvalidatePlot(true);
+
             }
             catch (Exception ex)
             {
