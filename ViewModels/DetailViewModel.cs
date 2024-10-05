@@ -23,6 +23,7 @@ namespace Trackit.ViewModels
         private int _trackerId;
         private Tracker _tracker;
         private bool _isFromDateInitialized = false;
+        private bool _suppressNotifications;
 
         private DateTime _fromDate;
         public DateTime FromDate
@@ -48,8 +49,12 @@ namespace Trackit.ViewModels
                 if (_toDate != value)
                 {
                     _toDate = value;
-                    OnPropertyChanged();
-                    LoadChartDataAsync();
+
+                    if (!_suppressNotifications)
+                    {
+                        OnPropertyChanged();
+                        LoadChartDataAsync();
+                    }
                 }
             }
         }
@@ -440,7 +445,9 @@ Tap ✉️ to navigate to the export page.",
 
                 var filteredReadings = FilterReadingsByDate(readings);
 
+                _suppressNotifications = true;
                 ToDate = DateTime.Now;
+                _suppressNotifications = false;
 
                 if (readings == null || trackerSettings == null)
                 {
@@ -470,13 +477,9 @@ Tap ✉️ to navigate to the export page.",
 
                 var plotModel = CreatePlotModel(trackerSettings);
 
-                plotModel.Series.Clear();
-                plotModel.Annotations.Clear();
-
                 AddSeries(plotModel, filteredReadings, trackerSettings);
                 AddEMASeries(plotModel, filteredReadings, trackerSettings);
 
-                    PlotModel = null;
                     PlotModel = plotModel;
                     PlotModel.InvalidatePlot(true);
 
