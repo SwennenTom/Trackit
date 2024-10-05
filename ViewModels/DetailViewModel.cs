@@ -49,7 +49,6 @@ namespace Trackit.ViewModels
                 if (_toDate != value)
                 {
                     _toDate = value;
-
                     if (!_suppressNotifications)
                     {
                         OnPropertyChanged();
@@ -58,6 +57,7 @@ namespace Trackit.ViewModels
                 }
             }
         }
+
 
         public string? Name => _tracker?.name;
 
@@ -230,6 +230,9 @@ Tap ✉️ to navigate to the export page.",
 
                 IsBusy = true;
                 await App.Database.AddValueAsync(trackerValue);
+                _suppressNotifications = true;
+                ToDate = DateTime.Now;
+                _suppressNotifications = false;
                 await LoadChartDataAsync();
                 PlotModel.InvalidatePlot(true);
                 IsBusy = false;
@@ -288,8 +291,9 @@ Tap ✉️ to navigate to the export page.",
 
         private IEnumerable<TrackerValues> FilterReadingsByDate(IEnumerable<TrackerValues> readings)
         {
-            return readings.Where(r => r.date >= FromDate && r.date <= ToDate);
+            return readings.Where(r => r.date >= FromDate && r.date <= ToDate.AddDays(1));
         }
+
 
         private PlotModel CreatePlotModel(TrackerSettings trackerSettings)
         {
@@ -444,10 +448,6 @@ Tap ✉️ to navigate to the export page.",
                 var (readings, trackerSettings) = await FetchDataAsync(_trackerId);
 
                 var filteredReadings = FilterReadingsByDate(readings);
-
-                _suppressNotifications = true;
-                ToDate = DateTime.Now;
-                _suppressNotifications = false;
 
                 if (readings == null || trackerSettings == null)
                 {
